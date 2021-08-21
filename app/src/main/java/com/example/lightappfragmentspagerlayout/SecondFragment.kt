@@ -1,5 +1,6 @@
 package com.example.lightappfragmentspagerlayout
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -31,6 +32,7 @@ class SecondFragment : Fragment() {
                 // Responds to when slider's touch event is being started
 
                 val value = slider.value.toInt() // or just your string
+
                 (activity as MainActivity?)?.setdata(value)
                 if (false) {
                     val intent = Intent(getActivity()?.getBaseContext(), MainActivity.UHFMainActivity::class.java) as Intent
