@@ -22,10 +22,11 @@ class SecondFragment : Fragment() {
     lateinit var brightness: TextView
     lateinit var seekBar_white: SeekBar
     lateinit var seekBar_brightness: SeekBar
-
-
+    lateinit var  b_arrow: TextView
 
     lateinit var layoutInflater_view: View
+
+
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -45,8 +46,13 @@ class SecondFragment : Fragment() {
         brightness= layoutInflater_view.findViewById(R.id.brigthness)
         seekBar_white= layoutInflater_view.findViewById(R.id.seekBar_white)
         seekBar_brightness= layoutInflater_view.findViewById(R.id.seekBar2)
+        b_arrow = layoutInflater_view.findViewById<TextView>(R.id.backarrow)
 
+        b_arrow.setOnClickListener {
 
+            (activity as MainActivity).showFragment(0)
+
+        }
 
         seekBar_white.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(

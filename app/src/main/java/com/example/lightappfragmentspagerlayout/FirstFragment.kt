@@ -28,10 +28,15 @@ class FirstFragment : Fragment() {
     lateinit var button_AP:Button
     lateinit var button_Devices:Button
 
-
-
     lateinit var thiscontext: Context
     lateinit var rv: RecyclerView
+
+    lateinit var Type_: ArrayList<String>
+    lateinit var  Title_: ArrayList<String>
+    lateinit var imgid_dots: ArrayList<Int>
+    lateinit var imgid_edit: ArrayList<Int>
+    lateinit var imgid_on: ArrayList<Int>
+    lateinit var adapter :ContactsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,8 +65,26 @@ class FirstFragment : Fragment() {
 
         button_AP = layoutInflater_view.findViewById<View>(R.id.Change_Wifi_AccessPoint) as Button
         button_Devices = layoutInflater_view.findViewById<View>(R.id.Scan_for_Devices) as Button
+        rv = layoutInflater_view.findViewById<View>(R.id.RecView_devices) as RecyclerView
+
+        if (((activity as MainActivity).light_characteristics.size!=0)) {
+            adapter = ContactsAdapter(
+                    Type_.toTypedArray(),
+                    Title_.toTypedArray(),
+                    imgid_dots.toTypedArray(),
+                    imgid_edit.toTypedArray(),
+                    imgid_on.toTypedArray(),
+                    (activity as MainActivity).light_characteristics,
+                    (activity as MainActivity).listofsender,
+                    (activity as MainActivity).nn
+            )
 
 
+            // Attach the adapter to the recyclerview to populate items
+            rv.adapter = adapter
+            // Set layout manager to position the items
+            rv.layoutManager = LinearLayoutManager(thiscontext)
+        }
 
         (activity as MainActivity?)?.broadcaster_receiver = UDPBroadcaster(thiscontext)
 
@@ -92,11 +115,11 @@ class FirstFragment : Fragment() {
                     (activity as MainActivity).listofsender = mutableListOf()
                     if (siz > 0) {
 
-                        var Type_: ArrayList<String> = ArrayList<String>(siz)
-                        var Title_: ArrayList<String> = ArrayList<String>(siz)
-                        var imgid_dots: ArrayList<Int> = ArrayList<Int>(siz)
-                        var imgid_edit: ArrayList<Int> = ArrayList<Int>(siz)
-                        var imgid_on: ArrayList<Int> = ArrayList<Int>(siz)
+                        Type_= ArrayList<String>(siz)
+                        Title_= ArrayList<String>(siz)
+                        imgid_dots= ArrayList<Int>(siz)
+                        imgid_edit = ArrayList<Int>(siz)
+                        imgid_on = ArrayList<Int>(siz)
 
                         for (u in 0..siz - 1) {
                             Type_.add(u.toString())
@@ -114,14 +137,7 @@ class FirstFragment : Fragment() {
 
                         }
 
-
-
-                        rv = layoutInflater_view.findViewById<View>(R.id.RecView_devices) as RecyclerView
-                        // Initialize contacts
-                        // Create adapter passing in the sample user data
-
-
-                        val adapter = ContactsAdapter(
+                        adapter = ContactsAdapter(
                                 Type_.toTypedArray(),
                                 Title_.toTypedArray(),
                                 imgid_dots.toTypedArray(),

@@ -21,12 +21,13 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import androidx.viewpager2.widget.ViewPager2
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -329,8 +330,10 @@ class ContactsAdapter(
 
             val context: Context = it.getContext()
             //val myIntent = Intent(context, light_colors_and_features::class.java)
-
             nn.n = position
+            val activity = context as Activity
+            (activity as MainActivity).showFragment(1)
+
             //context.startActivity(myIntent)
         }
     }
@@ -381,7 +384,11 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var  vpPager: ViewPager2
+    lateinit var transaction: FragmentTransaction
+    val fragment1: FirstFragment = FirstFragment()
+    val fragment2: SecondFragment = SecondFragment()
+
+    lateinit var  vpPager: FragmentContainerView
     lateinit var image_music:ImageView
     lateinit var image_mic:ImageView
 
@@ -413,7 +420,26 @@ class MainActivity : AppCompatActivity() {
         light_characteristics[nn.n].setcolostring(red, green, blue, white)
     }
 
+    fun showFragment(n:Int=0) {
 
+        transaction = supportFragmentManager.beginTransaction()
+        if (n==0)
+        {
+            //transaction.hide(fragment2);
+            transaction.replace(R.id.fragment_container_view, fragment1)
+            //transaction.show(fragment1)
+
+        }
+        if (n==1)
+        {
+            //transaction.hide(fragment1);
+            transaction.replace(R.id.fragment_container_view, fragment2)
+            //transaction.show(fragment2)
+        }
+
+        //transaction.addToBackStack(null)
+        transaction.commit()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -424,9 +450,8 @@ class MainActivity : AppCompatActivity() {
         image_mic = findViewById<View>(R.id.image_mic) as ImageView
         image_music.setImageResource(R.mipmap.ic_launcher_round)
 
-        vpPager = findViewById<View>(com.example.lightappfragmentspagerlayout.R.id.vpPager) as ViewPager2
-        vpPager.setAdapter(createAdapter())
-
+        vpPager = findViewById<View>(com.example.lightappfragmentspagerlayout.R.id.fragment_container_view) as FragmentContainerView
+        showFragment(0)
 
         viewModel = EventViewModel()
         Aview = AndroidViewModel()
