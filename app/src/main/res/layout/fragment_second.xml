@@ -11,28 +11,69 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/slider_"
-            android:layout_width="343dp"
-            android:layout_height="10px"
-            android:layout_marginBottom="412dp"
-            android:valueFrom="0.0"
-            android:valueTo="100.0"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        <SeekBar
+            android:id="@+id/seekBar2"
+            android:layout_width="0dp"
+            android:layout_height="20dp"
+            android:progress="100"
+            app:layout_constraintBottom_toBottomOf="@+id/brigthness"
+            app:layout_constraintEnd_toEndOf="@+id/seekBar_white"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/brigthness" />
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+            android:id="@+id/brigthness"
+            android:layout_width="146dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+
             android:layout_marginBottom="32dp"
-            android:text="TextView"
-            app:layout_constraintBottom_toTopOf="@+id/slider_"
+            android:gravity="left"
+            android:text="Brightness 100%"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/warmwhite"
+            app:layout_constraintEnd_toEndOf="@+id/warmwhite"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/warmwhite"
+            tools:text="Brightness 100%" />
+
+        <TextView
+            android:id="@+id/warmwhite"
+            android:layout_width="146dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:gravity="left"
+            android:text="Warm white   0%"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/seekBar_white"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:text="Warm white   0%" />
+
+
+        <com.example.lightappfragmentspagerlayout.MyCanvasView
+            android:id="@+id/imageView_"
+            android:layout_width="match_parent"
+            android:layout_height="491dp"
+            app:layout_constraintBottom_toTopOf="@+id/seekBar2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
+        <SeekBar
+            android:id="@+id/seekBar_white"
+            android:layout_width="0dp"
+            android:layout_height="19dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="32dp"
+            android:progress="100"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/warmwhite" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

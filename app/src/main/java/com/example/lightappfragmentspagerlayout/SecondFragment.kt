@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.material.slider.Slider
 
@@ -14,7 +16,15 @@ import com.google.android.material.slider.Slider
 
 class SecondFragment : Fragment() {
 
-    lateinit var slider: Slider
+
+    lateinit var myCanvasView:MyCanvasView
+    lateinit var warmwhite: TextView
+    lateinit var brightness: TextView
+    lateinit var seekBar_white: SeekBar
+    lateinit var seekBar_brightness: SeekBar
+
+
+
     lateinit var layoutInflater_view: View
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -25,46 +35,69 @@ class SecondFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        slider= layoutInflater_view.findViewById(R.id.slider_)
 
-        slider.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
-            override fun onStartTrackingTouch(slider: Slider) {
-                // Responds to when slider's touch event is being started
+        //(activity as MainActivity?)?.setdata(value)
 
-                val value = slider.value.toInt() // or just your string
 
-                (activity as MainActivity?)?.setdata(value)
-                if (false) {
-                    val intent = Intent(getActivity()?.getBaseContext(), MainActivity.UHFMainActivity::class.java) as Intent
-                    intent.putExtra("value", value)
-                    startActivity(intent)
-                }
+        myCanvasView = layoutInflater_view.findViewById(R.id.imageView_)
+
+        warmwhite= layoutInflater_view.findViewById(R.id.warmwhite)
+        brightness= layoutInflater_view.findViewById(R.id.brigthness)
+        seekBar_white= layoutInflater_view.findViewById(R.id.seekBar_white)
+        seekBar_brightness= layoutInflater_view.findViewById(R.id.seekBar2)
+
+
+
+        seekBar_white.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                    seekBar: SeekBar, progress: Int,
+                    fromUser: Boolean
+            ) {
+                var stringa: String = progress.toString()
+                if (progress < 10)
+                    stringa = "  " + stringa
+                else
+                    if ((progress < 100) and (progress >= 10))
+                        stringa = " " + stringa
+                warmwhite.setText("Warm white " + stringa + "%")
+                myCanvasView.V = progress.toFloat() / 100f
+                myCanvasView.drawstuff()
             }
 
-            override fun onStopTrackingTouch(slider: Slider) {
-                // Responds to when slider's touch event is being stopped
+            override fun onStartTrackingTouch(arg0: SeekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
             }
         })
 
-        slider.addOnChangeListener { slider, value, fromUser ->
-            // Responds to when slider's value is changed
+        seekBar_brightness.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(
+                    seekBar: SeekBar, progress: Int,
+                    fromUser: Boolean
+            ) {
+                var stringa: String = progress.toString()
+                if (progress < 10)
+                    stringa = "  " + stringa
+                else
+                    if ((progress < 100) and (progress >= 10))
+                        stringa = " " + stringa
+                brightness.setText("Brightness " + stringa + "%")
+                myCanvasView.S = progress.toFloat() / 100f
+                myCanvasView.drawstuff()
+            }
 
-          //  val intent = Intent(getActivity()?.getBaseContext(), MainActivity::class.java)
-          //  intent.putExtra("samplename", "abd")
-           // startActivity(intent)
+            override fun onStartTrackingTouch(arg0: SeekBar) {
+                // TODO Auto-generated method stub
+            }
 
-           if (false) {
-               val context = requireActivity()
-               /*getActivity() ? . getBaseContext()*/
-               val intent = Intent(context, NewServicex::class.java)
-               //intent.putExtra("samplename", "abd")
-               //getActivity()?.getBaseContext()?.startService(intent)
-
-               context.startService(intent)
-               val ss: String = intent.getStringExtra("samplename").toString()
-
-           }
-        }
+            override fun onStopTrackingTouch(seekBar: SeekBar) {
+                // TODO Auto-generated method stub
+            }
+        })
+        //myCanvasView.setImageBitmap(myCanvasView.extraBitmap);
 
     }
 
