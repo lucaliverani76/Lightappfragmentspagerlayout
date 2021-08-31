@@ -21,7 +21,7 @@ class UDPBroadcaster(var mContext: Context) {
     private var mDestPort = 0
     private var mSocket: DatagramSocket? = null
 
-    public var listofdevices: MutableList<List<String>>? = null
+    public var listofdevices: MutableList<MutableList<String>>? = null
 
     val SEND_PORT: Int = 10004
     val DEST_PORT: Int = 10004
@@ -72,7 +72,7 @@ class UDPBroadcaster(var mContext: Context) {
     }
 
 
-    fun close(): MutableList<List<String>>? {
+    fun close(): MutableList<MutableList<String>>? {
         if (mSocket != null && mSocket?.isClosed?.not() as Boolean) {
             mSocket?.close()
             closeUDPBroadcast()
@@ -197,9 +197,10 @@ class UDPBroadcaster(var mContext: Context) {
 
 
     public fun sendUDP() {
-
+        var cc:Int=0
         //this.open(SEND_PORT, DEST_PORT) //Open the broadcast
         var buffer: ByteArray = LIGHT?.stringtosend!!.toByteArray()
+        var stringold=LIGHT?.stringtosend
         Thread(Runnable {
             while (!isClosed) {
                 try {
@@ -208,8 +209,12 @@ class UDPBroadcaster(var mContext: Context) {
                     e.printStackTrace()
                 }
                 buffer = LIGHT?.stringtosend!!.toByteArray()
-                this.sendPacketx(buffer) //Send broadcast packet
-                Log.v("TAG","$TAG data: ${String(buffer)}")
+                if (LIGHT?.stringtosend==stringold){cc=kotlin.math.min(cc+1,3)}
+                else {cc=0}
+                if (cc<3)
+                {this.sendPacketx(buffer)} //Send broadcast packet
+                //Log.v("TAG","$TAG data: ${String(buffer)}")
+                stringold=LIGHT?.stringtosend
             }
             this.close() //Close the broadcast
         }).start()
@@ -229,28 +234,33 @@ class UDPBroadcaster(var mContext: Context) {
                 this.recvPacket(packet.data) //Receive broadcast
                 val data:String = String(packet.data)
                 var devicecharacteristics: List<String> = data.split("**")
-                if (listofdevices==null)
-                {
-                    listofdevices=mutableListOf<List<String>>()
-                    listofdevices?.add(devicecharacteristics)
+                if ((devicecharacteristics.size>=1) &&(devicecharacteristics[0]=="$%LL%$")) {
 
-                }
-                else
-                {
-                    var trovato:Boolean=false
-                    for (k in listofdevices!!)
-                    {if (devicecharacteristics[0].equals(k[0]))
-                        trovato=true
+                    devicecharacteristics=devicecharacteristics.drop(1)
+
+                    var templist=devicecharacteristics.toMutableList()
+
+                    if (listofdevices == null) {
+                        listofdevices = mutableListOf<MutableList<String>>()
+                        listofdevices?.add(templist)
+
+                    } else {
+                        var trovato: Boolean = false
+                        for (k in listofdevices!!) {
+                            if (devicecharacteristics[0].equals(k[0]))
+                                trovato = true
+                        }
+                        if (trovato == false)
+                            listofdevices?.add(templist)
+
                     }
-                    if(trovato==false)
-                        listofdevices?.add(devicecharacteristics)
-
+                    Log.v("TAG", "$TAG data: $data")
+                    Log.v("TAG", "$TAG addr: ${packet.address}")
+                    Log.v("TAG", "$TAG port: ${packet.port}")
                 }
-                Log.v("TAG","$TAG data: $data")
-                Log.v("TAG","$TAG addr: ${packet.address}")
-                Log.v("TAG","$TAG port: ${packet.port}")
                 
             }
+
             this.close() //Quit receiving broadcast
         }).start()
     }

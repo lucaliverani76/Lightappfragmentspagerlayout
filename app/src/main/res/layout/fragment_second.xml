@@ -75,15 +75,25 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/warmwhite" />
 
-        <TextView
-            android:id="@+id/backarrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/imageView_back"
+            android:layout_width="48dp"
+            android:layout_height="33dp"
             android:layout_marginStart="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:text="_*_"
+            android:src="@drawable/ic_mybackicon"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="280dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:background="@color/purple_200"
+            app:layout_constraintStart_toEndOf="@+id/imageView_back"
             app:layout_constraintTop_toTopOf="parent" />
 
 

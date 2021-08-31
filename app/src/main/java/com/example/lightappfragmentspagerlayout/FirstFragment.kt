@@ -1,13 +1,17 @@
 package com.example.lightappfragmentspagerlayout
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,22 +31,35 @@ class FirstFragment : Fragment() {
     lateinit var layoutInflater_view: View
     lateinit var button_AP:Button
     lateinit var button_Devices:Button
+    lateinit var probar:ProgressBar
+
 
     lateinit var thiscontext: Context
     lateinit var rv: RecyclerView
-
-    lateinit var Type_: ArrayList<String>
-    lateinit var  Title_: ArrayList<String>
-    lateinit var imgid_dots: ArrayList<Int>
-    lateinit var imgid_edit: ArrayList<Int>
-    lateinit var imgid_on: ArrayList<Int>
-    lateinit var adapter :ContactsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
 
         }
+    }
+
+    private fun setProgressValue(progress:Int) {
+
+        // set the progress
+        probar.setProgress(progress);
+
+        Thread(Runnable {
+            while (progress<600) {
+                try {
+                    Thread.sleep(500) //500ms delay
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                setProgressValue(progress + 2);
+            }
+        }).start()
+
     }
 
     override fun onCreateView(
@@ -57,6 +74,7 @@ class FirstFragment : Fragment() {
         return  (layoutInflater_view)
     }
 
+    @SuppressLint("WrongViewCast")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -65,27 +83,9 @@ class FirstFragment : Fragment() {
 
         button_AP = layoutInflater_view.findViewById<View>(R.id.Change_Wifi_AccessPoint) as Button
         button_Devices = layoutInflater_view.findViewById<View>(R.id.Scan_for_Devices) as Button
-        rv = layoutInflater_view.findViewById<View>(R.id.RecView_devices) as RecyclerView
+        probar= layoutInflater_view.findViewById<View>(R.id.progressBar) as ProgressBar
 
-        if (((activity as MainActivity).light_characteristics.size!=0)) {
-            adapter = ContactsAdapter(
-                    Type_.toTypedArray(),
-                    Title_.toTypedArray(),
-                    imgid_dots.toTypedArray(),
-                    imgid_edit.toTypedArray(),
-                    imgid_on.toTypedArray(),
-                    (activity as MainActivity).light_characteristics,
-                    (activity as MainActivity).listofsender,
-                    (activity as MainActivity).nn
-            )
-
-
-            // Attach the adapter to the recyclerview to populate items
-            rv.adapter = adapter
-            // Set layout manager to position the items
-            rv.layoutManager = LinearLayoutManager(thiscontext)
-        }
-
+        probar.setVisibility(View.INVISIBLE);
         (activity as MainActivity?)?.broadcaster_receiver = UDPBroadcaster(thiscontext)
 
 
@@ -99,31 +99,51 @@ class FirstFragment : Fragment() {
         }
         button_Devices.setOnClickListener {
 
+            var progre=0
+            probar.setMax(100)
+            probar.setProgress(0)
+            probar.setVisibility(View.VISIBLE);
+            var siz:Int=0
 
             (activity as MainActivity).broadcaster_receiver.recvUDPBroadcast()
 
+
+
+            Thread(Runnable {
+
+                while (progre < 100) {
+                    Thread.sleep(50)
+                    probar.setProgress(progre);
+                    progre += 1
+                }
+                probar.setVisibility(View.INVISIBLE);
+            }).start()
+
+            
             Handler().postDelayed({
-
-
                 (activity as MainActivity).listofdevices = (activity as MainActivity).broadcaster_receiver.close()
 
+
+
                 if ((activity as MainActivity).listofdevices != null) {
-                    val siz = (activity as MainActivity).listofdevices?.size as Int
 
 
                     //light_characteristics = mutableListOf()
                     (activity as MainActivity).listofsender = mutableListOf()
+
+
+                    siz = (activity as MainActivity).listofdevices?.size as Int
                     if (siz > 0) {
 
-                        Type_= ArrayList<String>(siz)
-                        Title_= ArrayList<String>(siz)
-                        imgid_dots= ArrayList<Int>(siz)
-                        imgid_edit = ArrayList<Int>(siz)
-                        imgid_on = ArrayList<Int>(siz)
+                        var Type_: ArrayList<String> = ArrayList<String>(siz)
+                        var Title_: ArrayList<String> = ArrayList<String>(siz)
+                        var imgid_dots: ArrayList<Int> = ArrayList<Int>(siz)
+                        var imgid_edit: ArrayList<Int> = ArrayList<Int>(siz)
+                        var imgid_on: ArrayList<Int> = ArrayList<Int>(siz)
 
                         for (u in 0..siz - 1) {
                             Type_.add(u.toString())
-                            var temptitle: List<String> = (activity as MainActivity).listofdevices!!.get(u)
+                            var temptitle: MutableList<String> = (activity as MainActivity).listofdevices!!.get(u)
                             Title_.add(temptitle.get(0) as String)
                             imgid_dots.add(R.drawable.ic_audiotrack_24px)
                             imgid_edit.add(R.drawable.ic_create_24px)
@@ -137,7 +157,14 @@ class FirstFragment : Fragment() {
 
                         }
 
-                        adapter = ContactsAdapter(
+
+
+                        rv = layoutInflater_view.findViewById<View>(R.id.RecView_devices) as RecyclerView
+                        // Initialize contacts
+                        // Create adapter passing in the sample user data
+
+
+                        val adapter = ContactsAdapter(
                                 Type_.toTypedArray(),
                                 Title_.toTypedArray(),
                                 imgid_dots.toTypedArray(),
@@ -154,9 +181,15 @@ class FirstFragment : Fragment() {
                         // Set layout manager to position the items
                         rv.layoutManager = LinearLayoutManager(thiscontext)
 
+
                     }
                 }
-            }, 3000)
+                }, 5000)
+
+
+
+            //setVisibility(View.VISIBLE);
+
 
         }
 

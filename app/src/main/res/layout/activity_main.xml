@@ -29,9 +29,8 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <androidx.fragment.app.FragmentContainerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/fragment_container_view"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vpPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/image_mic"
@@ -41,7 +40,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
 
-    </androidx.fragment.app.FragmentContainerView>
+    </androidx.viewpager2.widget.ViewPager2>
+
+    <Button
+        android:id="@+id/button_test"
+        android:layout_width="100dp"
+        android:layout_height="45dp"
+        android:layout_marginBottom="4dp"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/image_mic"
+        app:layout_constraintTop_toBottomOf="@+id/vpPager" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
