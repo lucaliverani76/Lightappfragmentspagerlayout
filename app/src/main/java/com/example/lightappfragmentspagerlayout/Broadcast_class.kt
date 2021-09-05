@@ -23,13 +23,13 @@ class UDPBroadcaster(var mContext: Context) {
 
     public var listofdevices: MutableList<MutableList<String>>? = null
 
-    val SEND_PORT: Int = 10004
-    val DEST_PORT: Int = 10004
-    val LOCAL_PORT:Int = 10004 /* must be equal to LOCAL_PORT */
+    val SEND_PORT: Int = 8232
+    val DEST_PORT: Int = 8232
+    val LOCAL_PORT:Int = 8232 /* must be equal to LOCAL_PORT */
     var IP:String="0.0.0.0"
 
     var isClosed: Boolean = false
-    var sendBuffer: String = "{\"red\":23, \"green\":23 , \"blue\":100, , \"white\":76}"
+    var sendBuffer: String = "{\"red\":23, \"green\":23 , \"blue\":100, , \"alpha\":76}"
 
     var LIGHT:lightinformation?=null
 
@@ -184,7 +184,7 @@ class UDPBroadcaster(var mContext: Context) {
         Thread(Runnable {
             while (!isClosed) {
                 try {
-                    Thread.sleep(500) //500ms delay
+                    Thread.sleep(50) //500ms delay
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -204,7 +204,7 @@ class UDPBroadcaster(var mContext: Context) {
         Thread(Runnable {
             while (!isClosed) {
                 try {
-                    Thread.sleep(500) //500ms delay
+                    Thread.sleep(20) //500ms delay
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -229,7 +229,7 @@ class UDPBroadcaster(var mContext: Context) {
         Thread(Runnable {
             while (!isClosed){
                 try{
-                    Thread.sleep(500) //500ms delay
+                    Thread.sleep(50) //500ms delay
                 }catch (e:Exception){e.printStackTrace()}
                 this.recvPacket(packet.data) //Receive broadcast
                 val data:String = String(packet.data)

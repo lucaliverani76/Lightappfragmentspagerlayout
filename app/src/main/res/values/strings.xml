@@ -3,11 +3,20 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-        <string-array name="programs_array">
-            <item>Color Picker</item>
-            <item>Chill out</item>
-            <item>Fade slow</item>
-            <item>What?</item>
-        </string-array>
+    <string-array name="programs_array">
+        <item>Color Picker</item>
+        <item>Color_Change</item>
+        <item>Strobe_Color</item>
+        <item>Strobe_White</item>
+        <item>Lightning</item>
+        <item>Lava2</item>
+        <item>Breath</item>
+        <item>Ocean</item>
+        <item>Mic2Light</item>
+        <item>Heartbeat</item>
+        <item>Heartbeat2</item>
+        <item>Police</item>
+        <item>Candel</item>
+    </string-array>
 
 </resources>

@@ -45,8 +45,8 @@ class lightinformation(
         public var NameofAP: String = "",
         public var IP: String = "0.0.0.0",
         public var port: Int = 0,
-        public var stringtosend: String = "{\"GLight\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"white\":0}",
-        public var stringtosend_old: String = "{\"GLight\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"white\":0}",
+        public var stringtosend: String = "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alphs\":0}",
+        public var stringtosend_old: String = "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}",
         public var Sint: Int = 100,
         public var Vint: Int = 100,
         public var ActionType: Int = 0
@@ -72,14 +72,14 @@ class lightinformation(
         this.blue_transformed = RGBW and 0xff
         this.white = (RGBW shr 24) and 0xff
         this.stringtosend = "{" +
-                "\"GLight\":0,"+
+                "\"GLights\":0,"+
                 "\"red\":" +
                 this.red_transformed.toInt() +
                 ",\"green\":" +
                 this.green_transformed.toInt() +
                 ",\"blue\":" +
                 this.blue_transformed.toInt() +
-                ", \"white\":" +
+                ", \"alpha\":" +
                 this.white.toInt() +
                 "}"
         this.stringtosend_old = this.stringtosend
@@ -94,9 +94,9 @@ class lightinformation(
             this.stringtosend = this.stringtosend_old
         } else {
             this.stringtosend = "{" +
-                    "\"GLight\":" +
+                    "\"GLights\":" +
                     ActionType.toString() +
-                    ",\"red\":0, \"green\":0 , \"blue\":0,  \"white\":0}"
+                    ",\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}"
 
         }
     }
@@ -424,7 +424,7 @@ class ContactsAdapter(
                 )
                 listofsender.get(position).sendUDP()
             } else {
-                light_characteristics.get(position).stringtosend="{\"GLight\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"white\":0}"
+                light_characteristics.get(position).stringtosend="{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}"
 
                 viewHolder.imageView3.setImageResource(R.drawable.ic_settings_power_24px);
                     imgid_on[position] = R.drawable.ic_settings_power_24px
@@ -521,6 +521,10 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var  vpPager: ViewPager2
 
+    lateinit var Scanwifi:scanwifi
+
+    lateinit var thiscontext:Context
+
     var localadapter:ViewPagerAdapter? = null
     lateinit var image_music:ImageView
     lateinit var image_mic:ImageView
@@ -574,6 +578,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity_ = this
+        thiscontext = activity_!!.applicationContext
+       // Scanwifi=scanwifi(thiscontext)
+
         setContentView(com.example.lightappfragmentspagerlayout.R.layout.activity_main)
         menuArray = getResources().getStringArray(R.array.programs_array);
         buttontest= findViewById<View>(R.id.button_test) as Button

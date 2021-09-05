@@ -185,10 +185,7 @@ class FirstFragment : Fragment() {
                     }
                 }
                 }, 5000)
-
-
-
-            //setVisibility(View.VISIBLE);
+            
 
 
         }
