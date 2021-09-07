@@ -81,7 +81,7 @@ class FirstFragment : Fragment() {
         //(activity as MainActivity?)?.setdata(value)
 
 
-        button_AP = layoutInflater_view.findViewById<View>(R.id.Change_Wifi_AccessPoint) as Button
+
         button_Devices = layoutInflater_view.findViewById<View>(R.id.Scan_for_Devices) as Button
         probar= layoutInflater_view.findViewById<View>(R.id.progressBar) as ProgressBar
 
@@ -90,13 +90,7 @@ class FirstFragment : Fragment() {
 
 
 
-        button_AP.setOnClickListener {
 
-
-            /*val myIntent = Intent(this@MainActivity, scan_wifi::class.java)
-            this@MainActivity.startActivity(myIntent)*/
-
-        }
         button_Devices.setOnClickListener {
 
             var progre=0
@@ -106,7 +100,7 @@ class FirstFragment : Fragment() {
             var siz:Int=0
 
             (activity as MainActivity).broadcaster_receiver.recvUDPBroadcast()
-
+            //(activity as MainActivity).Scanwifi.startScanning()
 
 
             Thread(Runnable {
@@ -122,7 +116,10 @@ class FirstFragment : Fragment() {
             
             Handler().postDelayed({
                 (activity as MainActivity).listofdevices = (activity as MainActivity).broadcaster_receiver.close()
-
+             /*   if ( (activity as MainActivity).Scanwifi.scandone==true)
+                {
+                        val pippo=0
+                }*/
 
 
                 if ((activity as MainActivity).listofdevices != null) {
@@ -142,12 +139,12 @@ class FirstFragment : Fragment() {
                         var imgid_on: ArrayList<Int> = ArrayList<Int>(siz)
 
                         for (u in 0..siz - 1) {
-                            Type_.add(u.toString())
+                            Type_.add("Light")
                             var temptitle: MutableList<String> = (activity as MainActivity).listofdevices!!.get(u)
                             Title_.add(temptitle.get(0) as String)
                             imgid_dots.add(R.drawable.ic_audiotrack_24px)
-                            imgid_edit.add(R.drawable.ic_create_24px)
-                            imgid_on.add(R.drawable.ic_settings_power_24px)
+                            imgid_edit.add(R.drawable.ic_baseline_color_lens_24)
+                            imgid_on.add(R.drawable.ic_baseline_toggle_off_24)
 
                             (activity as MainActivity).light_characteristics.add(lightinformation(NameofAP = temptitle?.get(0) as String))
                             (activity as MainActivity).light_characteristics.get(u).IP = temptitle.get(1) as String

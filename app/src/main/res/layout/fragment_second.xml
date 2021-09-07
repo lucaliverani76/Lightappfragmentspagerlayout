@@ -15,10 +15,15 @@
             android:id="@+id/seekBar2"
             android:layout_width="0dp"
             android:layout_height="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="0dp"
             android:progress="100"
             app:layout_constraintBottom_toBottomOf="@+id/brigthness"
-            app:layout_constraintEnd_toEndOf="@+id/seekBar_white"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
+            android:minHeight="20dp"
+            android:maxHeight="20dp"
             app:layout_constraintStart_toEndOf="@+id/brigthness" />
 
         <TextView
@@ -69,7 +74,9 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="32dp"
-            android:progress="100"
+            android:progress="0"
+            android:minHeight="20dp"
+            android:maxHeight="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"

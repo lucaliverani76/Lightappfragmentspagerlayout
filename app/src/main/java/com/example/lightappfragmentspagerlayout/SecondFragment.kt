@@ -35,15 +35,16 @@ class SecondFragment : Fragment() {
 
 
     public fun changeseekbarwhite(progress: Int){
-        var stringa: String = progress.toString()
-        if (progress < 10)
+        val progressx=progress
+        var stringa: String = progressx.toString()
+        if (progressx < 10)
             stringa = "  " + stringa
         else
-            if ((progress < 100) and (progress >= 10))
+            if ((progressx < 100) and (progressx >= 10))
                 stringa = " " + stringa
         warmwhite.setText("Warm white " + stringa + "%")
 
-        seekBar_white.progress=progress
+        seekBar_white.progress=progressx
 
 
     }
@@ -136,7 +137,8 @@ class SecondFragment : Fragment() {
                     if ((progress < 100) and (progress >= 10))
                         stringa = " " + stringa
                 warmwhite.setText("Warm white " + stringa + "%")
-                myCanvasView.Vint = progress
+                myCanvasView.Sint = progress
+                myCanvasView.White_=kotlin.math.min(255f*progress.toFloat()/100f, 255f).toInt()
                 if (deactivatedraw == 0) {
                     myCanvasView.drawstuff()
                 }
@@ -163,7 +165,7 @@ class SecondFragment : Fragment() {
                     if ((progress < 100) and (progress >= 10))
                         stringa = " " + stringa
                 brightness.setText("Brightness " + stringa + "%")
-                myCanvasView.Sint = progress
+                myCanvasView.Vint = progress
                 if (deactivatedraw == 0) {
                     myCanvasView.drawstuff()
                 }

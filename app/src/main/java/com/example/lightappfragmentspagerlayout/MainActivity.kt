@@ -47,14 +47,15 @@ class lightinformation(
         public var port: Int = 0,
         public var stringtosend: String = "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alphs\":0}",
         public var stringtosend_old: String = "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}",
-        public var Sint: Int = 100,
+        public var Sint: Int = 0,
         public var Vint: Int = 100,
-        public var ActionType: Int = 0
+        public var ActionType: Int = 0,
+        public var modifiedcolor:Int=0
 ) {
 
     public fun setcolostring(
             red: Int = 255, green: Int = 255, blue: Int = 255,
-            white: Int = 0, Sint: Int = 100, Vint: Int = 100
+            white: Int = 0, Sint: Int = 100, Vint: Int = 100, modifiedcolor: Int
     ) {
 
 
@@ -64,13 +65,33 @@ class lightinformation(
 
         this.Sint = Sint
         this.Vint = Vint
+        this.modifiedcolor=modifiedcolor
 
+       /* val andreacrazyidea=false
+        if (andreacrazyidea)
+        {
+            this.red_transformed = red
+            this.green_transformed = green
+            this.blue_transformed = blue
+            this.white = white
 
+        }
+        else
+        {
         var RGBW = convertoRGBW(red, green, blue)
         this.red_transformed = (RGBW shr 16) and 0xff
         this.green_transformed = (RGBW shr 8) and 0xff
         this.blue_transformed = RGBW and 0xff
-        this.white = (RGBW shr 24) and 0xff
+        //this.white = (RGBW shr 24) and 0xff
+            this.white = white
+        }*/
+
+
+        this.red_transformed = red
+        this.green_transformed = green
+        this.blue_transformed = blue
+        this.white = white
+
         this.stringtosend = "{" +
                 "\"GLights\":0,"+
                 "\"red\":" +
@@ -152,6 +173,7 @@ class MyCanvasView: AppCompatImageView {
     public var modifiedcolor:Int=0
     public var V:Float=1f
     public var S:Float=1f
+    public var White_:Int=0
     public var Vint:Int=100
     public var Sint:Int=100
 
@@ -276,10 +298,10 @@ class MyCanvasView: AppCompatImageView {
         return true
     }
 
-    public fun drawstuff(red: Int, blue: Int, green: Int){
+    public fun drawstuff(mecolor:Int){
 
 
-        val mecolor: Int = 255 and 0xff shl 24 or (red and 0xff shl 16) or (green and 0xff shl 8) or (blue and 0xff)
+        //val mecolor: Int = 255 and 0xff shl 24 or (red and 0xff shl 16) or (green and 0xff shl 8) or (blue and 0xff)
 
         var paint = Paint()
         paint.setColor(mecolor)
@@ -319,16 +341,53 @@ class MyCanvasView: AppCompatImageView {
         hsv[1]=S
         hsv[2]=V
 
-        modifiedcolor = Color.HSVToColor(hsv);
 
-        var redValue_m = Color.red(modifiedcolor);
-        var blueValue_m = Color.blue(modifiedcolor);
-        var greenValue_m = Color.green(modifiedcolor)
-        //RGBW=rrr.rgbToRgbw(redValue  as UInt,greenValue as UInt, blueValue as UInt)
+        var redValue_m :Int = 255
+        var blueValue_m :Int = 255
+        var greenValue_m :Int = 255
+        var white_m:Int = 255
+
+        val andreacrazyidea=true
+        if (andreacrazyidea)
+        {
+            redValue_m = (redValue.toFloat()*this.V).toInt()
+            blueValue_m = (blueValue.toFloat()*this.V).toInt()
+            greenValue_m = (greenValue.toFloat()*this.V).toInt()
+            white_m = this.White_
+
+            val fact_white=0.5f
+            var xred:Float=(redValue_m.toFloat()+white_m.toFloat()/fact_white)
+            var xblue:Float=(blueValue_m.toFloat()+white_m.toFloat()/fact_white)
+            var xgreen:Float=(greenValue_m.toFloat()+white_m.toFloat()/fact_white)
+            val mmax:Float= kotlin.math.max(kotlin.math.max(xred, xblue), xgreen)
+            if (mmax>255f) {
+                xred = kotlin.math.min((xred / mmax * 255f), 255f)
+                xblue = kotlin.math.min((xblue / mmax * 255f), 255f)
+                xgreen = kotlin.math.min((xgreen / mmax * 255f), 255f)
+            }
+            else
+            {
 
 
+            }
+
+            modifiedcolor = 255 and 0xff shl 24 or (xred.toInt() and 0xff shl 16) or (xgreen.toInt() and 0xff shl 8) or (xblue.toInt() and 0xff)
+
+        }
+        else
+        {
+            hsv[1]=1.0f
+            modifiedcolor = Color.HSVToColor(hsv);
+
+            white_m=this.White_
+            redValue_m = Color.red(modifiedcolor);
+            blueValue_m = Color.blue(modifiedcolor);
+            greenValue_m = Color.green(modifiedcolor)
+            //RGBW=rrr.rgbToRgbw(redValue  as UInt,greenValue as UInt, blueValue as UInt)
+
+        }
         val activity = context as Activity
-        (activity as MainActivity).setdata(redValue_m, greenValue_m, blueValue_m, 255, Sint, Vint)
+        (activity as MainActivity).setdata(redValue_m, greenValue_m, blueValue_m, white_m, Sint, Vint, modifiedcolor)
 
 
         var paint = Paint()
@@ -399,8 +458,8 @@ class ContactsAdapter(
         //val contact: Contact = mContacts.get(position)
 
         viewHolder.textView.text = "       " //Type_[position]
-        val mecolor: Int = 255 and 0xff shl 24 or (light_characteristics.get(position).red and 0xff shl 16) or (light_characteristics.get(position).green and 0xff shl 8) or (light_characteristics.get(position).blue and 0xff)
-        viewHolder.textView.setBackgroundColor(mecolor)
+        //val mecolor: Int = 255 and 0xff shl 24 or (light_characteristics.get(position).red and 0xff shl 16) or (light_characteristics.get(position).green and 0xff shl 8) or (light_characteristics.get(position).blue and 0xff)
+        viewHolder.textView.setBackgroundColor(light_characteristics.get(position).modifiedcolor)
 
         viewHolder.textView2.text = Title_[position]
         viewHolder.imageView.setImageResource(imgid_dots[position])
@@ -410,8 +469,8 @@ class ContactsAdapter(
         viewHolder.imageView3.setOnClickListener() {
             //Toast.makeText(mContext, "Ho cliccato!", Toast.LENGTH_SHORT).show()
             if (light_characteristics.get(position).stateonoff == false) {
-                viewHolder.imageView3.setImageResource(R.drawable.ic_settings_power_24px_2);
-                imgid_on[position] = R.drawable.ic_settings_power_24px_2
+                viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_on_24);
+                imgid_on[position] = R.drawable.ic_baseline_toggle_on_24
                 light_characteristics.get(position).stateonoff = true
                 light_characteristics.get(position).stringtosend=light_characteristics.get(position).stringtosend_old
                 listofsender.get(position).open(
@@ -426,12 +485,12 @@ class ContactsAdapter(
             } else {
                 light_characteristics.get(position).stringtosend="{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}"
 
-                viewHolder.imageView3.setImageResource(R.drawable.ic_settings_power_24px);
-                    imgid_on[position] = R.drawable.ic_settings_power_24px
-                Handler().postDelayed({
+                viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_off_24);
+                    imgid_on[position] = R.drawable.ic_baseline_toggle_off_24
+               // Handler().postDelayed({
                     light_characteristics.get(position).stateonoff = false
-                    listofsender.get(position).close()
-                },700)
+                  //  listofsender.get(position).close()
+              //  },700)
             }
         }
 
@@ -448,10 +507,10 @@ class ContactsAdapter(
 
             (myFragment as SecondFragment).spin_.setSelection(light_characteristics.get(position).ActionType)
             (myFragment as SecondFragment).deactivatedraw=1
-            (myFragment as SecondFragment).changeseekbarwhite(light_characteristics.get(position).Vint)
-            (myFragment as SecondFragment).changeseekbarbrigthness(light_characteristics.get(position).Sint)
+            (myFragment as SecondFragment).changeseekbarwhite(light_characteristics.get(position).Sint)
+            (myFragment as SecondFragment).changeseekbarbrigthness(light_characteristics.get(position).Vint)
 
-            (myFragment as SecondFragment).myCanvasView.drawstuff(light_characteristics.get(position).red, light_characteristics.get(position).blue, light_characteristics.get(position).green)
+            (myFragment as SecondFragment).myCanvasView.drawstuff(light_characteristics.get(position).modifiedcolor)
 
 
             activity.vpPager.setCurrentItem(1)
@@ -523,7 +582,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var Scanwifi:scanwifi
 
-    lateinit var thiscontext:Context
+
 
     var localadapter:ViewPagerAdapter? = null
     lateinit var image_music:ImageView
@@ -555,15 +614,19 @@ class MainActivity : AppCompatActivity() {
 
     public fun setdata(
             red: Int = 255, green: Int = 255, blue: Int = 255,
-            white: Int = 0, Sint: Int = 100, Vint: Int = 100
+            white: Int = 0, Sint: Int = 100, Vint: Int = 100, modifiedcolor:Int=0
     ) {
-            light_characteristics[nn.n].setcolostring(red, green, blue, white, Sint, Vint)
+        light_characteristics[nn.n].modifiedcolor=modifiedcolor
+                light_characteristics[nn.n].setcolostring(red, green, blue, white, Sint, Vint, modifiedcolor)
+
 
     }
 
     public fun setdata( specialcommand:Int
     ) {
+
             light_characteristics[nn.n].setcolostring(specialcommand, menuArray[specialcommand])
+
      }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -578,8 +641,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity_ = this
-        thiscontext = activity_!!.applicationContext
-       // Scanwifi=scanwifi(thiscontext)
+        //thiscontext = activity_!!.applicationContext
+        //Scanwifi=scanwifi(activity_ as Activity)
 
         setContentView(com.example.lightappfragmentspagerlayout.R.layout.activity_main)
         menuArray = getResources().getStringArray(R.array.programs_array);
@@ -589,6 +652,7 @@ class MainActivity : AppCompatActivity() {
             val myFragment = (activity_ as MainActivity).supportFragmentManager.findFragmentByTag("f0")
             (myFragment as FirstFragment).rv.adapter?.notifyItemChanged(nn.n)
         }
+        buttontest.setVisibility(View.INVISIBLE)
 
         image_music = findViewById<View>(R.id.image_music) as ImageView
         image_mic = findViewById<View>(R.id.image_mic) as ImageView

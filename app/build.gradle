@@ -6,17 +6,28 @@ plugins {
 android {
     signingConfigs {
         'First Release' {
+        storeFile file(var3)
+            storePassword var2
+            keyAlias var1
+            keyPassword var
+        }
+        Questoqui {
+            storeFile file('C:\\Users\\mark8\\Documents\\androidkey\\pippo2.jks')
+            storePassword 'lucakey08'
+            keyAlias 'keypippo'
+            keyPassword 'impossiblekey2394.%'
         }
     }
+
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
     defaultConfig {
         applicationId "com.example.lightappfragmentspagerlayout"
-        minSdkVersion 16
+        minSdkVersion 22
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName '2.0'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -25,6 +36,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.Questoqui
         }
     }
     compileOptions {
