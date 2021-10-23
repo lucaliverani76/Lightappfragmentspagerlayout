@@ -16,6 +16,7 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.res.ResourcesCompat
@@ -24,6 +25,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -50,8 +52,23 @@ class lightinformation(
         public var Sint: Int = 0,
         public var Vint: Int = 100,
         public var ActionType: Int = 0,
-        public var modifiedcolor:Int=0
+        public var modifiedcolor:Int=0,
+        public var Type_:String=""
 ) {
+    companion object {
+        var uniquecounter:Int=0
+    }
+
+
+    public var portidentified:Int=0
+
+    init{
+        portidentified=uniquecounter
+        uniquecounter++
+    }
+
+    public var sublights:MutableList<lightinformation> = mutableListOf()
+    public var udpbroadcaster:UDPBroadcaster?=null
 
     public fun setcolostring(
             red: Int = 255, green: Int = 255, blue: Int = 255,
@@ -66,26 +83,6 @@ class lightinformation(
         this.Sint = Sint
         this.Vint = Vint
         this.modifiedcolor=modifiedcolor
-
-       /* val andreacrazyidea=false
-        if (andreacrazyidea)
-        {
-            this.red_transformed = red
-            this.green_transformed = green
-            this.blue_transformed = blue
-            this.white = white
-
-        }
-        else
-        {
-        var RGBW = convertoRGBW(red, green, blue)
-        this.red_transformed = (RGBW shr 16) and 0xff
-        this.green_transformed = (RGBW shr 8) and 0xff
-        this.blue_transformed = RGBW and 0xff
-        //this.white = (RGBW shr 24) and 0xff
-            this.white = white
-        }*/
-
 
         this.red_transformed = red
         this.green_transformed = green
@@ -104,15 +101,55 @@ class lightinformation(
                 this.white.toInt() +
                 "}"
         this.stringtosend_old = this.stringtosend
+   for (n in 0..sublights.size-1)
+   {
+       sublights.get(n).red = red
+       sublights.get(n).green = green
+       sublights.get(n).blue = blue
+
+       sublights.get(n).Sint = Sint
+       sublights.get(n).Vint = Vint
+       sublights.get(n).modifiedcolor=modifiedcolor
+
+       sublights.get(n).red_transformed = red
+       sublights.get(n).green_transformed = green
+       sublights.get(n).blue_transformed = blue
+       sublights.get(n).white = white
+
+       sublights.get(n).stringtosend = "{" +
+               "\"GLights\":0,"+
+               "\"red\":" +
+               sublights.get(n).red_transformed.toInt() +
+               ",\"green\":" +
+               sublights.get(n).green_transformed.toInt() +
+               ",\"blue\":" +
+               sublights.get(n).blue_transformed.toInt() +
+               ", \"alpha\":" +
+               sublights.get(n).white.toInt() +
+               "}"
+       sublights.get(n).stringtosend_old =  sublights.get(n).stringtosend
+   }
+
     }
 
+    public fun setstringtosend(s:String){
+        this.stringtosend=s
+        for (n in 0..sublights.size-1)
+        {sublights.get(n).stringtosend=s}
+    }
 
+    public fun setmodifiedcolor(s:Int){
+        this.modifiedcolor=s
+        for (n in 0..sublights.size-1)
+        {sublights.get(n).modifiedcolor=s}
+    }
     public fun setcolostring(
             ActionType: Int, ActionString: String
     ) {
+
         this.ActionType = ActionType
         if (ActionType == 0) {
-            this.stringtosend = this.stringtosend_old
+            this.stringtosend=this.stringtosend_old
         } else {
             this.stringtosend = "{" +
                     "\"GLights\":" +
@@ -120,6 +157,27 @@ class lightinformation(
                     ",\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}"
 
         }
+        for (n in 0..sublights.size-1)
+        {
+            sublights.get(n).ActionType = ActionType
+            if (ActionType == 0) {
+                sublights.get(n).stringtosend =sublights.get(n).stringtosend_old
+            } else {
+                sublights.get(n).stringtosend ="{" +
+                        "\"GLights\":" +
+                        ActionType.toString() +
+                        ",\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}"
+
+            }
+
+        }
+    }
+
+
+    public fun setstateonoff (state_:Boolean){
+        this.stateonoff=state_
+        for (n in 0..sublights.size-1)
+        {sublights.get(n).stateonoff=state_}
     }
 
     fun convertoRGBW(Ri: Int = 0, Gi: Int = 0, Bi: Int = 0): Int {
@@ -160,6 +218,22 @@ class lightinformation(
     if (Go > 255) Go = 255;
     return (Wo and 0xff shl 24 or (Ro and 0xff shl 16) or (Go and 0xff shl 8) or (Bo and 0xff) )
 }
+
+    fun sendUDP()
+    {
+        this.udpbroadcaster?.sendUDP()
+        for (n in 0..sublights.size-1) {
+            sublights.get(n).udpbroadcaster?.sendUDP()
+        }
+    }
+
+    fun closeUDP()
+    {
+        this.udpbroadcaster?.close()
+        for (n in 0..sublights.size-1) {
+            sublights.get(n).udpbroadcaster?.close()
+        }
+    }
 
 }
 
@@ -416,13 +490,13 @@ class MyCanvasView: AppCompatImageView {
 
 
 class ContactsAdapter(
-        private val Type_: Array<String>,
+        /*private val Type_: Array<String>,
         private val Title_: Array<String>,
         private val imgid_dots: Array<Int>,
         private val imgid_edit: Array<Int>,
-        private val imgid_on: Array<Int>,
+        private val imgid_on: Array<Int>,*/
         var light_characteristics: MutableList<lightinformation>,
-        var listofsender: MutableList<UDPBroadcaster>,
+        /*var listofsender: MutableList<UDPBroadcaster>,*/
         var nn: myint
 ) : RecyclerView.Adapter<ContactsAdapter.ViewHolder>() {
 
@@ -461,61 +535,110 @@ class ContactsAdapter(
         //val mecolor: Int = 255 and 0xff shl 24 or (light_characteristics.get(position).red and 0xff shl 16) or (light_characteristics.get(position).green and 0xff shl 8) or (light_characteristics.get(position).blue and 0xff)
         viewHolder.textView.setBackgroundColor(light_characteristics.get(position).modifiedcolor)
 
-        viewHolder.textView2.text = Title_[position]
-        viewHolder.imageView.setImageResource(imgid_dots[position])
-        viewHolder.imageView2.setImageResource(imgid_edit[position])
-        viewHolder.imageView3.setImageResource(imgid_on[position])
+        viewHolder.textView2.text = light_characteristics.get(position).NameofAP
+        if (light_characteristics.get(position).Type_!="AP")
+        {
+            viewHolder.imageView.setImageResource(R.drawable.ic_audiotrack_24px)
+            viewHolder.imageView2.setImageResource(R.drawable.ic_baseline_color_lens_24)
+            viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_off_24)
+        }
+        else
+        {
+            viewHolder.imageView.setImageResource(R.drawable.ic_baseline_info_24)
+            viewHolder.imageView2.setImageResource(R.drawable.ic_baseline_import_export_24)
+            viewHolder.imageView3.setImageResource(R.mipmap.empty_round)
+        }
 
-        viewHolder.imageView3.setOnClickListener() {
-            //Toast.makeText(mContext, "Ho cliccato!", Toast.LENGTH_SHORT).show()
+        viewHolder.imageView3.setOnClickListener()
+        {
+
+        if (light_characteristics.get(position).Type_!="AP")
+        {
             if (light_characteristics.get(position).stateonoff == false) {
                 viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_on_24);
-                imgid_on[position] = R.drawable.ic_baseline_toggle_on_24
-                light_characteristics.get(position).stateonoff = true
-                light_characteristics.get(position).stringtosend=light_characteristics.get(position).stringtosend_old
-                listofsender.get(position).open(
-                        localPort = 10004 + position,
-                        destPort = light_characteristics.get(
-                                position
-                        ).port,
-                        _IP = light_characteristics.get(position).IP,
-                        lIGHT = light_characteristics.get(position)
+                /*imgid_on[position] = R.drawable.ic_baseline_toggle_on_24*/
+
+                light_characteristics.get(position).setstateonoff(true)
+                light_characteristics.get(position).setstringtosend (
+                light_characteristics.get(position).stringtosend_old)
+
+
+                light_characteristics.get(position).udpbroadcaster?.open(
+                    localPort = 10000 + light_characteristics.get(position).portidentified,
+                    destPort = light_characteristics.get(
+                        position
+                    ).port,
+                    _IP = light_characteristics.get(position).IP,
+                    lIGHT = light_characteristics.get(position)
                 )
-                listofsender.get(position).sendUDP()
+
+                light_characteristics.get(position).sendUDP()
             } else {
-                light_characteristics.get(position).stringtosend="{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}"
+                light_characteristics.get(position).setstringtosend (
+                    "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}")
 
                 viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_off_24);
-                    imgid_on[position] = R.drawable.ic_baseline_toggle_off_24
-               // Handler().postDelayed({
-                    light_characteristics.get(position).stateonoff = false
-                  //  listofsender.get(position).close()
-              //  },700)
+                /*imgid_on[position] = R.drawable.ic_baseline_toggle_off_24*/
+                // Handler().postDelayed({
+                light_characteristics.get(position).setstateonoff(false)
+                //  listofsender.get(position).close()
+                //  },700)
             }
+        }
         }
 
 
-        viewHolder.imageView2.setOnClickListener() {
+        viewHolder.imageView2.setOnClickListener()
+        {
             nn.n = position
 
+            if (light_characteristics.get(position).Type_!="AP")
+            {
+                val context: Context = it.getContext()
+                //val myIntent = Intent(context, light_colors_and_features::class.java)
+                val activity = context as Activity
 
-            val context: Context = it.getContext()
-            //val myIntent = Intent(context, light_colors_and_features::class.java)
-            val activity = context as Activity
+                val myFragment =
+                    (activity as MainActivity).supportFragmentManager.findFragmentByTag("f1")
 
-            val myFragment = (activity as MainActivity).supportFragmentManager.findFragmentByTag("f1")
+                (myFragment as SecondFragment).spin_.setSelection(light_characteristics.get(position).ActionType)
+                (myFragment as SecondFragment).deactivatedraw = 1
+                (myFragment as SecondFragment).changeseekbarwhite(light_characteristics.get(position).Sint)
+                (myFragment as SecondFragment).changeseekbarbrigthness(
+                    light_characteristics.get(
+                        position
+                    ).Vint
+                )
 
-            (myFragment as SecondFragment).spin_.setSelection(light_characteristics.get(position).ActionType)
-            (myFragment as SecondFragment).deactivatedraw=1
-            (myFragment as SecondFragment).changeseekbarwhite(light_characteristics.get(position).Sint)
-            (myFragment as SecondFragment).changeseekbarbrigthness(light_characteristics.get(position).Vint)
+                (myFragment as SecondFragment).myCanvasView.drawstuff(
+                    light_characteristics.get(
+                        position
+                    ).modifiedcolor
+                )
 
-            (myFragment as SecondFragment).myCanvasView.drawstuff(light_characteristics.get(position).modifiedcolor)
+
+                activity.vpPager.setCurrentItem(1)
+                (myFragment as SecondFragment).deactivatedraw = 0
+                //context.startActivity(myIntent)
+            }
+            else
+            {
+                val context: Context = it.getContext()
+                //val myIntent = Intent(context, light_colors_and_features::class.java)
+                val activity = context as Activity
+
+                val myFragment =
+                    (activity as MainActivity).supportFragmentManager.findFragmentByTag("f0")
+                (myFragment as FirstFragment).APtext.setText("AP Name: " + light_characteristics.get(position).NameofAP)
+
+                (myFragment as FirstFragment).APtext.setVisibility(View.VISIBLE);
+                (myFragment as FirstFragment).Ptext.setVisibility(View.VISIBLE);
+                (myFragment as FirstFragment).PAssText.setVisibility(View.VISIBLE);
+                (myFragment as FirstFragment).Buttonconnect.setVisibility(View.VISIBLE);
+                (myFragment as FirstFragment).Buttoncancel.setVisibility(View.VISIBLE);
 
 
-            activity.vpPager.setCurrentItem(1)
-            (myFragment as SecondFragment).deactivatedraw=0
-            //context.startActivity(myIntent)
+            }
         }
     }
 
@@ -524,7 +647,7 @@ class ContactsAdapter(
 
     // Returns the total count of items in the list
     override fun getItemCount(): Int {
-        return Type_.size
+        return light_characteristics.size
     }
 }
 
@@ -582,12 +705,13 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var Scanwifi:scanwifi
 
-
+    lateinit var thegroups:MutableList<Groups_>
 
     var localadapter:ViewPagerAdapter? = null
     lateinit var image_music:ImageView
     lateinit var image_mic:ImageView
-    lateinit var buttontest : Button
+    lateinit var image_group:ImageView
+
     lateinit var menuArray: Array<String>
 
     lateinit var Aview:AndroidViewModel
@@ -599,7 +723,9 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel: EventViewModel
 
     var light_characteristics: MutableList<lightinformation>    = mutableListOf()
-    var listofsender: MutableList<UDPBroadcaster> = mutableListOf()
+    var light_characteristicsglobal: MutableList<lightinformation>    = mutableListOf()
+    /*var listofsender: MutableList<UDPBroadcaster> = mutableListOf()*/
+
     var nn: myint = myint()
 
 
@@ -616,7 +742,7 @@ class MainActivity : AppCompatActivity() {
             red: Int = 255, green: Int = 255, blue: Int = 255,
             white: Int = 0, Sint: Int = 100, Vint: Int = 100, modifiedcolor:Int=0
     ) {
-        light_characteristics[nn.n].modifiedcolor=modifiedcolor
+        light_characteristics[nn.n].setmodifiedcolor(modifiedcolor)
                 light_characteristics[nn.n].setcolostring(red, green, blue, white, Sint, Vint, modifiedcolor)
 
 
@@ -638,26 +764,118 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // There are no request codes
+            val data: Intent? = result.data
+            var listofdevices_string: Array<String> = data?.getStringArrayExtra("MESSAGE") as Array<String>;
+            thegroups=outputgroups(listofdevices_string)
+            light_characteristics= mutableListOf()
+            for (group_ in thegroups)
+            {
+                if (group_.ISGROUP) {
+                    light_characteristicsglobal.add(lightinformation(NameofAP = group_.nameofgroup))
+                    var sss= light_characteristicsglobal.size-1
+                    light_characteristicsglobal.get(sss).IP = "0.0.0.0"
+                    light_characteristicsglobal.get(sss).port = 0
+                    /*light_characteristicsglobal.get(sss).udpbroadcaster*/
+                    light_characteristicsglobal.get(sss).Type_ = "Light"
+                    for (r in 1..group_.listoflightsingroup.size-1)
+                    {
+                        var x: lightinformation? = searchforlight(group_.listoflightsingroup[r], light_characteristicsglobal)
+                        x?.let { light_characteristicsglobal.get(sss).sublights.add(it) }
+                    }
+                    println()
+                    light_characteristics.add(light_characteristicsglobal.get(sss))
+                }
+                else
+                {
+                    var x: lightinformation? = searchforlight(group_.nameofgroup, light_characteristicsglobal)
+                    x?.let { light_characteristics.add(it) }
+                }
+
+                for (z in light_characteristicsglobal){
+                    if (z.Type_=="AP")
+                        light_characteristics.add(z)
+                }
+
+            }
+
+
+
+            val myFragment = supportFragmentManager.findFragmentByTag("f0")
+
+
+             (myFragment as FirstFragment).rv = findViewById<View>(R.id.RecView_devices) as RecyclerView
+
+
+
+            val adapter = ContactsAdapter(
+                    /*Type_.toTypedArray(),
+                    Title_.toTypedArray(),
+                    imgid_dots.toTypedArray(),
+                    imgid_edit.toTypedArray(),
+                    imgid_on.toTypedArray(),*/
+                    light_characteristics,
+                    /*(activity as MainActivity).listofsender,*/
+                    nn
+            )
+
+
+
+            (myFragment as FirstFragment).rv.adapter = adapter
+            // Set layout manager to position the items
+            (myFragment as FirstFragment).rv.layoutManager = LinearLayoutManager(this)
+        }
+    }
+
+
+    fun searchforlight(n:String,lightlist:MutableList<lightinformation>):lightinformation?
+    {
+        for (k in lightlist)
+        {
+            if (k.NameofAP==n)
+            return k
+        }
+        return null
+    }
+
+    fun openSomeActivityForResult(intent:Intent){
+        resultLauncher.launch(intent)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity_ = this
         //thiscontext = activity_!!.applicationContext
-        //Scanwifi=scanwifi(activity_ as Activity)
+        Scanwifi=scanwifi(activity_ as Activity)
 
         setContentView(com.example.lightappfragmentspagerlayout.R.layout.activity_main)
         menuArray = getResources().getStringArray(R.array.programs_array);
-        buttontest= findViewById<View>(R.id.button_test) as Button
 
-        buttontest.setOnClickListener {
-            val myFragment = (activity_ as MainActivity).supportFragmentManager.findFragmentByTag("f0")
-            (myFragment as FirstFragment).rv.adapter?.notifyItemChanged(nn.n)
-        }
-        buttontest.setVisibility(View.INVISIBLE)
+
+
 
         image_music = findViewById<View>(R.id.image_music) as ImageView
         image_mic = findViewById<View>(R.id.image_mic) as ImageView
+        image_group = findViewById<View>(R.id.image_group) as ImageView
         image_music.setImageResource(R.drawable.ic_audiotrack_24px)
         image_mic.setImageResource(R.drawable.ic_mic_24px)
+        image_group.setImageResource(R.drawable.ic_baseline_subject_24)
+
+        image_group.setOnClickListener (){
+            val context: Context = it.getContext()
+            val myIntent = Intent(context, Group_activity::class.java)
+
+            val listofdevices: MutableList<String> = ArrayList()
+            for (t in light_characteristics) {
+                listofdevices.add((t as lightinformation).NameofAP)
+            }
+            myIntent.putExtra("EXTRA_SESSION_ID", listofdevices.toTypedArray());
+            openSomeActivityForResult(myIntent)
+
+        }
+
 
         vpPager = findViewById<View>(com.example.lightappfragmentspagerlayout.R.id.vpPager) as ViewPager2
         vpPager.setUserInputEnabled(false);
@@ -676,6 +894,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+
+
     private fun createAdapter(): ViewPagerAdapter? {
         return ViewPagerAdapter(this)
     }
@@ -692,9 +912,6 @@ class MainActivity : AppCompatActivity() {
                 while(stopstart) {
                     Thread.sleep(100)
                     counter++
-
-
-
 
                     viewModelScope.launch(Dispatchers.Main){
                         var pippo=0;

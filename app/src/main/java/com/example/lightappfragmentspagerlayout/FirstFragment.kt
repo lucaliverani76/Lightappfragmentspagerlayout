@@ -8,18 +8,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
+import android.widget.*
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+
 
 /**
  * A simple [Fragment] subclass.
@@ -33,9 +31,15 @@ class FirstFragment : Fragment() {
     lateinit var button_Devices:Button
     lateinit var probar:ProgressBar
 
-
     lateinit var thiscontext: Context
     lateinit var rv: RecyclerView
+
+    lateinit var APtext:TextView
+    lateinit var Ptext:TextView
+    lateinit var PAssText:EditText
+
+    lateinit var Buttonconnect:Button
+    lateinit var Buttoncancel:Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,10 +89,46 @@ class FirstFragment : Fragment() {
         button_Devices = layoutInflater_view.findViewById<View>(R.id.Scan_for_Devices) as Button
         probar= layoutInflater_view.findViewById<View>(R.id.progressBar) as ProgressBar
 
+        APtext= layoutInflater_view.findViewById<View>(R.id.textView) as TextView
+        Ptext= layoutInflater_view.findViewById<View>(R.id.textView4) as TextView
+        PAssText= layoutInflater_view.findViewById<View>(R.id.editTextTextPassword) as EditText
+        Buttonconnect= layoutInflater_view.findViewById<View>(R.id.button) as Button
+        Buttoncancel= layoutInflater_view.findViewById<View>(R.id.button2) as Button
+
+        APtext.setVisibility(View.INVISIBLE);
+        Ptext.setVisibility(View.INVISIBLE);
+        PAssText.setVisibility(View.INVISIBLE);
+        Buttonconnect.setVisibility(View.INVISIBLE);
+        Buttoncancel.setVisibility(View.INVISIBLE);
+
         probar.setVisibility(View.INVISIBLE);
         (activity as MainActivity?)?.broadcaster_receiver = UDPBroadcaster(thiscontext)
 
 
+        Buttonconnect.setOnClickListener {
+            (activity as MainActivity).Scanwifi.wifiSSID= (APtext.getText() as String).replace("AP Name: " ,"")
+            (activity as MainActivity).Scanwifi.wifiPassword= PAssText.getText().toString()
+
+            (activity as MainActivity).Scanwifi.tryconnection()
+
+            Handler().postDelayed({
+                APtext.setVisibility(View.INVISIBLE);
+                Ptext.setVisibility(View.INVISIBLE);
+                PAssText.setVisibility(View.INVISIBLE);
+                Buttonconnect.setVisibility(View.INVISIBLE);
+                Buttoncancel.setVisibility(View.INVISIBLE);
+                button_Devices.callOnClick()
+            }, 5000)
+            }
+
+
+        Buttoncancel.setOnClickListener {
+            APtext.setVisibility(View.INVISIBLE);
+            Ptext.setVisibility(View.INVISIBLE);
+            PAssText.setVisibility(View.INVISIBLE);
+            Buttonconnect.setVisibility(View.INVISIBLE);
+            Buttoncancel.setVisibility(View.INVISIBLE);
+        }
 
 
         button_Devices.setOnClickListener {
@@ -97,15 +137,22 @@ class FirstFragment : Fragment() {
             probar.setMax(100)
             probar.setProgress(0)
             probar.setVisibility(View.VISIBLE);
-            var siz:Int=0
+
+            var siz_devices:Int=0
+            var siz_AP:Int=0
 
             (activity as MainActivity).broadcaster_receiver.recvUDPBroadcast()
-            //(activity as MainActivity).Scanwifi.startScanning()
+            (activity as MainActivity).Scanwifi.startScanning()
 
+            if ((activity as MainActivity).light_characteristicsglobal!=null  && (activity as MainActivity).light_characteristicsglobal!!.size>0 )
+            for (j in 0..(activity as MainActivity).light_characteristicsglobal!!.size-1)
+            {(activity as MainActivity).light_characteristicsglobal.get(j).closeUDP()}
 
-            Thread(Runnable {
+            Thread(Runnable
+            {
 
-                while (progre < 100) {
+                while (progre < 100)
+                {
                     Thread.sleep(50)
                     probar.setProgress(progre);
                     progre += 1
@@ -113,75 +160,101 @@ class FirstFragment : Fragment() {
                 probar.setVisibility(View.INVISIBLE);
             }).start()
 
-            
+
             Handler().postDelayed({
+
+                //(activity as MainActivity).listofsender = mutableListOf()
+                (activity as MainActivity).light_characteristicsglobal = mutableListOf()
+
                 (activity as MainActivity).listofdevices = (activity as MainActivity).broadcaster_receiver.close()
-             /*   if ( (activity as MainActivity).Scanwifi.scandone==true)
+
+                if ((activity as MainActivity).listofdevices != null)
                 {
-                        val pippo=0
-                }*/
+                    siz_devices = (activity as MainActivity).listofdevices?.size as Int
+                }
+
+                if ( (activity as MainActivity).Scanwifi.scandone==true)
+                {
+                    siz_AP = (activity as MainActivity).Scanwifi.list?.size as Int
+                }
+
+                if ((siz_devices + siz_AP) > 0)
+                {
+
+                    /*var Type_: ArrayList<String> = ArrayList<String>(siz_devices + siz_AP)
+                    var Title_: ArrayList<String> = ArrayList<String>(siz_devices + siz_AP)
+                    var imgid_dots: ArrayList<Int> = ArrayList<Int>(siz_devices + siz_AP)
+                    var imgid_edit: ArrayList<Int> = ArrayList<Int>(siz_devices + siz_AP)
+                    var imgid_on: ArrayList<Int> = ArrayList<Int>(siz_devices + siz_AP)*/
 
 
-                if ((activity as MainActivity).listofdevices != null) {
 
 
-                    //light_characteristics = mutableListOf()
-                    (activity as MainActivity).listofsender = mutableListOf()
-
-
-                    siz = (activity as MainActivity).listofdevices?.size as Int
-                    if (siz > 0) {
-
-                        var Type_: ArrayList<String> = ArrayList<String>(siz)
-                        var Title_: ArrayList<String> = ArrayList<String>(siz)
-                        var imgid_dots: ArrayList<Int> = ArrayList<Int>(siz)
-                        var imgid_edit: ArrayList<Int> = ArrayList<Int>(siz)
-                        var imgid_on: ArrayList<Int> = ArrayList<Int>(siz)
-
-                        for (u in 0..siz - 1) {
-                            Type_.add("Light")
+                    if (siz_devices>0){
+                        for (u in 0..siz_devices - 1)
+                        {
+                           /* Type_.add("Light")*/
                             var temptitle: MutableList<String> = (activity as MainActivity).listofdevices!!.get(u)
-                            Title_.add(temptitle.get(0) as String)
+                            /*Title_.add(temptitle.get(0) as String)
                             imgid_dots.add(R.drawable.ic_audiotrack_24px)
                             imgid_edit.add(R.drawable.ic_baseline_color_lens_24)
-                            imgid_on.add(R.drawable.ic_baseline_toggle_off_24)
+                            imgid_on.add(R.drawable.ic_baseline_toggle_off_24)*/
 
-                            (activity as MainActivity).light_characteristics.add(lightinformation(NameofAP = temptitle?.get(0) as String))
-                            (activity as MainActivity).light_characteristics.get(u).IP = temptitle.get(1) as String
-                            (activity as MainActivity).light_characteristics.get(u).port = temptitle?.get(2).toInt() as Int
+                            (activity as MainActivity).light_characteristicsglobal.add(lightinformation(NameofAP = temptitle?.get(0) ))
+                            (activity as MainActivity).light_characteristicsglobal.get(u).IP = temptitle.get(1)
+                            (activity as MainActivity).light_characteristicsglobal.get(u).port = temptitle?.get(2).toInt()
 
-                            (activity as MainActivity).listofsender.add(UDPBroadcaster(thiscontext))
-
+                            (activity as MainActivity).light_characteristicsglobal.get(u).udpbroadcaster=UDPBroadcaster(thiscontext)
+                            (activity as MainActivity).light_characteristicsglobal.get(u).Type_="Light"
                         }
-
-
-
-                        rv = layoutInflater_view.findViewById<View>(R.id.RecView_devices) as RecyclerView
-                        // Initialize contacts
-                        // Create adapter passing in the sample user data
-
-
-                        val adapter = ContactsAdapter(
-                                Type_.toTypedArray(),
-                                Title_.toTypedArray(),
-                                imgid_dots.toTypedArray(),
-                                imgid_edit.toTypedArray(),
-                                imgid_on.toTypedArray(),
-                                (activity as MainActivity).light_characteristics,
-                                (activity as MainActivity).listofsender,
-                                (activity as MainActivity).nn
-                        )
-
-
-                        // Attach the adapter to the recyclerview to populate items
-                        rv.adapter = adapter
-                        // Set layout manager to position the items
-                        rv.layoutManager = LinearLayoutManager(thiscontext)
-
-
                     }
+
+                    if (siz_AP>0){
+                        for (u in siz_devices..(siz_AP+siz_devices - 1))
+                        {
+                            /*Type_.add("AP")*/
+                            var temptitle: List<String> = (activity as MainActivity).Scanwifi.list
+                            /*Title_.add(temptitle.get(0) )
+                            imgid_dots.add(R.drawable.ic_baseline_info_24)
+                            imgid_edit.add(R.drawable.ic_baseline_import_export_24)
+                            imgid_on.add(R.mipmap.empty_round)*/
+
+                            (activity as MainActivity).light_characteristicsglobal.add(lightinformation(NameofAP = temptitle?.get(0) ))
+                            (activity as MainActivity).light_characteristicsglobal.get(u).IP = "0.0.0.0"
+                            (activity as MainActivity).light_characteristicsglobal.get(u).port = 0
+
+                            (activity as MainActivity).light_characteristicsglobal.get(u).udpbroadcaster=UDPBroadcaster(thiscontext)
+                            (activity as MainActivity).light_characteristicsglobal.get(u).Type_="AP"
+                        }
+                    }
+
+
+                    (activity as MainActivity).light_characteristics= (activity as MainActivity).light_characteristicsglobal
+                    rv = layoutInflater_view.findViewById<View>(R.id.RecView_devices) as RecyclerView
+                    // Initialize contacts
+                    // Create adapter passing in the sample user data
+
+
+                    val adapter = ContactsAdapter(
+                            /*Type_.toTypedArray(),
+                            Title_.toTypedArray(),
+                            imgid_dots.toTypedArray(),
+                            imgid_edit.toTypedArray(),
+                            imgid_on.toTypedArray(),*/
+                            (activity as MainActivity).light_characteristics,
+                            /*(activity as MainActivity).listofsender,*/
+                            (activity as MainActivity).nn
+                    )
+
+
+                    // Attach the adapter to the recyclerview to populate items
+                    rv.adapter = adapter
+                    // Set layout manager to position the items
+                    rv.layoutManager = LinearLayoutManager(thiscontext)
+
+
                 }
-                }, 5000)
+            }, 5000)
             
 
 

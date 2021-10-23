@@ -8,6 +8,17 @@
 
 
     <ImageView
+        android:id="@+id/image_group"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/image_mic"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ImageView
         android:id="@+id/image_mic"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -41,17 +52,6 @@
         app:layout_constraintVertical_bias="1.0">
 
     </androidx.viewpager2.widget.ViewPager2>
-
-    <Button
-        android:id="@+id/button_test"
-        android:layout_width="100dp"
-        android:layout_height="45dp"
-        android:layout_marginBottom="4dp"
-        android:text="Button"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/image_mic"
-        app:layout_constraintTop_toBottomOf="@+id/vpPager" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
