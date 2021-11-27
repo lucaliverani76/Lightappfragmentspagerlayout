@@ -57,13 +57,14 @@ class lightinformation(
         public var ActionType: Int = 0,
         public var modifiedcolor: Int = 0,
         public var Type_: String = "",
-        var hsv: FloatArray = FloatArray(3)
+        var hsv: FloatArray = FloatArray(4),
+        var linkedtomusic:Boolean=false
 ) {
     companion object {
         var uniquecounter:Int=0
     }
 
-    public var hsvlocal:FloatArray= FloatArray(3)
+    public var hsvlocal:FloatArray= FloatArray(4)
     public var portidentified:Int=0
 
     init{
@@ -217,6 +218,9 @@ class lightinformation(
 
     public fun setstateonoff(state_: Boolean){
         this.stateonoff=state_
+        if (state_==false)
+            this.setstringtosend(
+            "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}")
         for (n in 0..sublights.size-1)
         {sublights.get(n).stateonoff=state_}
     }
@@ -581,7 +585,13 @@ class ContactsAdapter(
         {
             viewHolder.imageView.setImageResource(R.drawable.ic_audiotrack_24px)
             viewHolder.imageView2.setImageResource(R.drawable.ic_baseline_color_lens_24)
-            viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_off_24)
+            if (light_characteristics.get(position).stateonoff == false) {
+                viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_off_24)
+            }
+            else
+            {
+                viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_on_24)
+            }
         }
         else
         {
@@ -590,97 +600,107 @@ class ContactsAdapter(
             viewHolder.imageView3.setImageResource(R.mipmap.empty_round)
         }
 
-        viewHolder.imageView3.setOnClickListener()
-        {
-
-        if (light_characteristics.get(position).Type_!="AP")
-        {
-            if (light_characteristics.get(position).stateonoff == false) {
-                viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_on_24);
-                /*imgid_on[position] = R.drawable.ic_baseline_toggle_on_24*/
-
-                light_characteristics.get(position).setstateonoff(true)
-                light_characteristics.get(position).setstringtosend(
-                        light_characteristics.get(position).stringtosend_old)
-
-
-                light_characteristics.get(position).udpbroadcaster?.open(
-                        localPort = 10000 + light_characteristics.get(position).portidentified,
-                        destPort = light_characteristics.get(
-                                position
-                        ).port,
-                        _IP = light_characteristics.get(position).IP,
-                        lIGHT = light_characteristics.get(position)
-                )
-
-                light_characteristics.get(position).sendUDP()
-            } else {
-                light_characteristics.get(position).setstringtosend(
-                        "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}")
-
-                viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_off_24);
-                /*imgid_on[position] = R.drawable.ic_baseline_toggle_off_24*/
-                // Handler().postDelayed({
-                light_characteristics.get(position).setstateonoff(false)
-                //  listofsender.get(position).close()
-                //  },700)
-            }
-        }
-        }
-
-
-        viewHolder.imageView2.setOnClickListener()
-        {
-            nn.n = position
-
-            if (light_characteristics.get(position).Type_!="AP")
+            viewHolder.imageView.setOnClickListener()
             {
-                val context: Context = it.getContext()
-                //val myIntent = Intent(context, light_colors_and_features::class.java)
-                val activity = context as Activity
+                if (light_characteristics.get(position).Type_!="AP")
+                {
+                    light_characteristics.get(position).linkedtomusic= !(light_characteristics.get(position).linkedtomusic)
 
-                val myFragment =
-                    (activity as MainActivity).supportFragmentManager.findFragmentByTag("f1")
+                }
+            }
 
-                (myFragment as SecondFragment).spin_.setSelection(light_characteristics.get(position).ActionType)
-                (myFragment as SecondFragment).deactivatedraw = 1
-                (myFragment as SecondFragment).changeseekbarwhite(light_characteristics.get(position).Sint)
-                (myFragment as SecondFragment).changeseekbarbrigthness(
-                        light_characteristics.get(
+            viewHolder.imageView3.setOnClickListener()
+            {
+
+                if (light_characteristics.get(position).Type_!="AP")
+                {
+                    if (light_characteristics.get(position).stateonoff == false) {
+                        viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_on_24);
+                        /*imgid_on[position] = R.drawable.ic_baseline_toggle_on_24*/
+
+                        light_characteristics.get(position).setstateonoff(true)
+                        light_characteristics.get(position).setstringtosend(
+                            light_characteristics.get(position).stringtosend_old)
+
+
+                        light_characteristics.get(position).udpbroadcaster?.open(
+                            localPort = 10000 + light_characteristics.get(position).portidentified,
+                            destPort = light_characteristics.get(
                                 position
+                            ).port,
+                            _IP = light_characteristics.get(position).IP,
+                            lIGHT = light_characteristics.get(position)
+                        )
+
+                        light_characteristics.get(position).sendUDP()
+                    } else {
+                        light_characteristics.get(position).setstringtosend(
+                            "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}")
+
+                        viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_off_24);
+                        /*imgid_on[position] = R.drawable.ic_baseline_toggle_off_24*/
+                        // Handler().postDelayed({
+                        light_characteristics.get(position).setstateonoff(false)
+                        //  listofsender.get(position).close()
+                        //  },700)
+                    }
+                }
+            }
+
+
+            viewHolder.imageView2.setOnClickListener()
+            {
+                nn.n = position
+
+                if (light_characteristics.get(position).Type_!="AP")
+                {
+                    val context: Context = it.getContext()
+                    //val myIntent = Intent(context, light_colors_and_features::class.java)
+                    val activity = context as Activity
+
+                    val myFragment =
+                        (activity as MainActivity).supportFragmentManager.findFragmentByTag("f1")
+
+                    (myFragment as SecondFragment).spin_.setSelection(light_characteristics.get(position).ActionType)
+                    (myFragment as SecondFragment).deactivatedraw = 1
+                    (myFragment as SecondFragment).changeseekbarwhite(light_characteristics.get(position).Sint)
+                    (myFragment as SecondFragment).changeseekbarbrigthness(
+                        light_characteristics.get(
+                            position
                         ).Vint
-                )
+                    )
 
-                (myFragment as SecondFragment).myCanvasView.drawstuff(
+                    (myFragment as SecondFragment).myCanvasView.drawstuff(
                         light_characteristics.get(
-                                position
+                            position
                         ).modifiedcolor
-                )
+                    )
 
 
-                activity.vpPager.setCurrentItem(1)
-                (myFragment as SecondFragment).deactivatedraw = 0
-                //context.startActivity(myIntent)
+                    activity.vpPager.setCurrentItem(1)
+                    (myFragment as SecondFragment).deactivatedraw = 0
+                    //context.startActivity(myIntent)
+                }
+                else
+                {
+                    val context: Context = it.getContext()
+                    //val myIntent = Intent(context, light_colors_and_features::class.java)
+                    val activity = context as Activity
+
+                    val myFragment =
+                        (activity as MainActivity).supportFragmentManager.findFragmentByTag("f0")
+                    (myFragment as FirstFragment).APtext.setText("AP Name: " + light_characteristics.get(position).NameofAP)
+
+                    (myFragment as FirstFragment).APtext.setVisibility(View.VISIBLE);
+                    (myFragment as FirstFragment).Ptext.setVisibility(View.VISIBLE);
+                    (myFragment as FirstFragment).PAssText.setVisibility(View.VISIBLE);
+                    (myFragment as FirstFragment).Buttonconnect.setVisibility(View.VISIBLE);
+                    (myFragment as FirstFragment).Buttoncancel.setVisibility(View.VISIBLE);
+
+
+                }
             }
-            else
-            {
-                val context: Context = it.getContext()
-                //val myIntent = Intent(context, light_colors_and_features::class.java)
-                val activity = context as Activity
 
-                val myFragment =
-                    (activity as MainActivity).supportFragmentManager.findFragmentByTag("f0")
-                (myFragment as FirstFragment).APtext.setText("AP Name: " + light_characteristics.get(position).NameofAP)
-
-                (myFragment as FirstFragment).APtext.setVisibility(View.VISIBLE);
-                (myFragment as FirstFragment).Ptext.setVisibility(View.VISIBLE);
-                (myFragment as FirstFragment).PAssText.setVisibility(View.VISIBLE);
-                (myFragment as FirstFragment).Buttonconnect.setVisibility(View.VISIBLE);
-                (myFragment as FirstFragment).Buttoncancel.setVisibility(View.VISIBLE);
-
-
-            }
-        }
     }
 
 
@@ -742,7 +762,7 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
 
 class MainActivity : AppCompatActivity() {
 
-    var  hsv_music: FloatArray = FloatArray(3)
+    var  hsv_music: FloatArray = FloatArray(4)
     var mMediaPlayer: MediaPlayer?=null
     lateinit var  vpPager: ViewPager2
 
@@ -757,11 +777,7 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var menuArray: Array<String>
 
-    lateinit var Aview:AndroidViewModel
 
-    var counter:Int=0
-
-    lateinit var intentx:Intent
 
     lateinit var viewModel: EventViewModel
 
@@ -801,14 +817,14 @@ class MainActivity : AppCompatActivity() {
 
      }
 
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+    /*override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return if (keyCode == KeyEvent.KEYCODE_BACK) {
             vpPager.setCurrentItem(0)
             true
         } else {
             super.onKeyDown(keyCode, event)
         }
-    }
+    }*/
 
     var resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -892,7 +908,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity_ = this
+         activity_ = this
 
 
         var REQUEST_CODE: Int =0
@@ -983,6 +999,7 @@ class MainActivity : AppCompatActivity() {
         image_mic.setImageResource(R.drawable.ic_mic_24px)
         image_group.setImageResource(R.drawable.ic_baseline_subject_24)
 
+
         image_music.setOnClickListener (){
             tempSongList= mutableListOf()
             getSongList(this, tempSongList)
@@ -1004,6 +1021,7 @@ class MainActivity : AppCompatActivity() {
 
 
                 fftfunction.link(mMediaPlayer)
+                hsv_music[3]=1f
             }
             else
             {
@@ -1011,7 +1029,7 @@ class MainActivity : AppCompatActivity() {
                 mMediaPlayer?.stop();
                 mMediaPlayer?.release();
                 mMediaPlayer=null
-                hsv_music[0]=-1.0f
+                hsv_music[3]=0.0f
 
                 }
 
@@ -1044,7 +1062,7 @@ class MainActivity : AppCompatActivity() {
         vpPager.setCurrentItem(0)
 
         viewModel = EventViewModel()
-        Aview = AndroidViewModel()
+        //Aview = AndroidViewModel()
 
 
 
@@ -1056,7 +1074,7 @@ class MainActivity : AppCompatActivity() {
         return ViewPagerAdapter(this)
     }
 
-    inner class AndroidViewModel() : ViewModel() {
+  /*  inner class AndroidViewModel() : ViewModel() {
 
         val parentJob = Job()
         val coroutineScope = CoroutineScope(parentJob + Dispatchers.Default)
@@ -1091,8 +1109,19 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+*/
+  override fun onBackPressed() {
 
+    val currentFragment = vpPager.currentItem
+        //(this as MainActivity).supportFragmentManager.findFragmentById(R.id.vpPager);
+    if (currentFragment == 1) {
+        val myFragment = (this as MainActivity).supportFragmentManager.findFragmentByTag("f1")
+        (myFragment as SecondFragment).backsecondfragment()
+    }
 
+      else {vpPager.setCurrentItem(0)}
+
+  }
 
 }
 

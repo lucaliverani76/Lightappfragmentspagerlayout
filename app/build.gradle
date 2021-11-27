@@ -12,7 +12,7 @@ android {
             keyPassword var
         }
         Questoqui {
-            storeFile file('C:\\Users\\mark8\\Documents\\androidkey\\pippo2.jks')
+            storeFile file('/home/lucaliverani/Documents/App luci/pippo2.jks')
             storePassword 'lucakey08'
             keyAlias 'keypippo'
             keyPassword 'impossiblekey2394.%'
@@ -64,3 +64,4 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
 
 }
+

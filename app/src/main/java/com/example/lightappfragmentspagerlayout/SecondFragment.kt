@@ -118,11 +118,8 @@ class SecondFragment : Fragment() {
         })
 
 
-
         b_arrow.setOnClickListener {
-            (activity as MainActivity).vpPager.setCurrentItem(0)
-            val myFragment = (activity as MainActivity).supportFragmentManager.findFragmentByTag("f0")
-            (myFragment as FirstFragment).rv.adapter?.notifyItemChanged((activity as MainActivity).nn.n)
+            backsecondfragment()
         }
 
         seekBar_white.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -180,8 +177,16 @@ class SecondFragment : Fragment() {
                 // TODO Auto-generated method stub
             }
         })
-        //myCanvasView.setImageBitmap(myCanvasView.extraBitmap);
 
+
+
+
+    }
+
+    public fun backsecondfragment() {
+        (activity as MainActivity).vpPager.setCurrentItem(0)
+        val myFragment = (activity as MainActivity).supportFragmentManager.findFragmentByTag("f0")
+        (myFragment as FirstFragment).rv.adapter?.notifyItemChanged((activity as MainActivity).nn.n)
     }
 
 }

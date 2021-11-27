@@ -15,11 +15,11 @@
 
         <Button
             android:id="@+id/Scan_for_Devices"
-            android:layout_width="349dp"
-            android:layout_height="70dp"
+            android:layout_width="232dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
             android:text="Scan_for_Devices"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -43,14 +43,13 @@
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_width="29dp"
+            android:layout_height="40dp"
             android:layout_marginBottom="16dp"
             app:layout_constraintBottom_toTopOf="@+id/RecView_devices"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/Scan_for_Devices" />
+            app:layout_constraintStart_toEndOf="@+id/Scan_for_Devices"
+            app:layout_constraintTop_toTopOf="@+id/Scan_for_Devices" />
 
         <TextView
             android:id="@+id/textView"
@@ -87,6 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginBottom="24dp"
+            android:minHeight="48dp"
             app:layout_constraintBottom_toTopOf="@+id/button"
             app:layout_constraintStart_toEndOf="@+id/textView4" />
 

@@ -209,7 +209,7 @@ class UDPBroadcaster(var mContext: Context) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                if ((LIGHT?.hsv?.get(0)!! >-1.0f)) {
+                if ((LIGHT?.linkedtomusic==true) && (LIGHT?.hsv?.get(3)!!>0.1f) && (LIGHT?.stateonoff==true)) {
                     LIGHT?.sethsv()
                 }
                 buffer = LIGHT?.stringtosend!!.toByteArray()

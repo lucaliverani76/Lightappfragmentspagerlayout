@@ -105,6 +105,7 @@ fun link(player: MediaPlayer?) {
         (activity_ as MainActivity).hsv_music[0]=H.toFloat()
         (activity_ as MainActivity).hsv_music[1]=1.0f
         (activity_ as MainActivity).hsv_music[2]=bright_.toFloat()
+
         dbValue_old=dbValue
     }
 
