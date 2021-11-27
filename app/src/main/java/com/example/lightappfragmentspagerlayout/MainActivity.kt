@@ -8,17 +8,20 @@ package com.example.lightappfragmentspagerlayout
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.*
+import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.util.AttributeSet
 import android.view.*
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -52,14 +55,15 @@ class lightinformation(
         public var Sint: Int = 0,
         public var Vint: Int = 100,
         public var ActionType: Int = 0,
-        public var modifiedcolor:Int=0,
-        public var Type_:String=""
+        public var modifiedcolor: Int = 0,
+        public var Type_: String = "",
+        var hsv: FloatArray = FloatArray(3)
 ) {
     companion object {
         var uniquecounter:Int=0
     }
 
-
+    public var hsvlocal:FloatArray= FloatArray(3)
     public var portidentified:Int=0
 
     init{
@@ -87,7 +91,10 @@ class lightinformation(
         this.red_transformed = red
         this.green_transformed = green
         this.blue_transformed = blue
+
         this.white = white
+
+
 
         this.stringtosend = "{" +
                 "\"GLights\":0,"+
@@ -101,6 +108,10 @@ class lightinformation(
                 this.white.toInt() +
                 "}"
         this.stringtosend_old = this.stringtosend
+
+        val RDBW= Color.RGBToHSV(this.red_transformed, this.green_transformed,
+                this.blue_transformed, this.hsvlocal);
+
    for (n in 0..sublights.size-1)
    {
        sublights.get(n).red = red
@@ -111,9 +122,9 @@ class lightinformation(
        sublights.get(n).Vint = Vint
        sublights.get(n).modifiedcolor=modifiedcolor
 
-       sublights.get(n).red_transformed = red
-       sublights.get(n).green_transformed = green
-       sublights.get(n).blue_transformed = blue
+       sublights.get(n).red_transformed = this.red_transformed
+       sublights.get(n).green_transformed = this.green_transformed
+       sublights.get(n).blue_transformed = this.blue_transformed
        sublights.get(n).white = white
 
        sublights.get(n).stringtosend = "{" +
@@ -128,17 +139,47 @@ class lightinformation(
                sublights.get(n).white.toInt() +
                "}"
        sublights.get(n).stringtosend_old =  sublights.get(n).stringtosend
+
+       sublights.get(n).hsvlocal=this.hsvlocal
    }
 
     }
 
-    public fun setstringtosend(s:String){
+    public fun setstringtosend(s: String){
         this.stringtosend=s
         for (n in 0..sublights.size-1)
         {sublights.get(n).stringtosend=s}
     }
 
-    public fun setmodifiedcolor(s:Int){
+    public fun sethsv(){
+
+        var newH=(this.hsvlocal[0]+this.hsv[0]*360)
+        if (newH>360){newH=newH-360}
+        var tt:FloatArray= FloatArray(3)
+        tt[0]=newH
+        tt[1]=this.hsv[1]
+        tt[2]=this.hsv[2]
+        var mycolor=Color.HSVToColor(tt)
+        var  red_=Color.red(mycolor)
+        var green_=Color.green(mycolor)
+        var blue_=Color.blue(mycolor)
+        //val a = Color.alpha(intColor)
+
+        this.stringtosend = "{" +
+                "\"GLights\":0,"+
+                "\"red\":" +
+                red_.toInt() +
+                ",\"green\":" +
+                green_.toInt() +
+                ",\"blue\":" +
+                blue_.toInt() +
+                ", \"alpha\":" +
+                this.white.toInt() +
+                "}"
+    }
+
+
+    public fun setmodifiedcolor(s: Int){
         this.modifiedcolor=s
         for (n in 0..sublights.size-1)
         {sublights.get(n).modifiedcolor=s}
@@ -174,7 +215,7 @@ class lightinformation(
     }
 
 
-    public fun setstateonoff (state_:Boolean){
+    public fun setstateonoff(state_: Boolean){
         this.stateonoff=state_
         for (n in 0..sublights.size-1)
         {sublights.get(n).stateonoff=state_}
@@ -372,7 +413,7 @@ class MyCanvasView: AppCompatImageView {
         return true
     }
 
-    public fun drawstuff(mecolor:Int){
+    public fun drawstuff(mecolor: Int){
 
 
         //val mecolor: Int = 255 and 0xff shl 24 or (red and 0xff shl 16) or (green and 0xff shl 8) or (blue and 0xff)
@@ -559,23 +600,23 @@ class ContactsAdapter(
                 /*imgid_on[position] = R.drawable.ic_baseline_toggle_on_24*/
 
                 light_characteristics.get(position).setstateonoff(true)
-                light_characteristics.get(position).setstringtosend (
-                light_characteristics.get(position).stringtosend_old)
+                light_characteristics.get(position).setstringtosend(
+                        light_characteristics.get(position).stringtosend_old)
 
 
                 light_characteristics.get(position).udpbroadcaster?.open(
-                    localPort = 10000 + light_characteristics.get(position).portidentified,
-                    destPort = light_characteristics.get(
-                        position
-                    ).port,
-                    _IP = light_characteristics.get(position).IP,
-                    lIGHT = light_characteristics.get(position)
+                        localPort = 10000 + light_characteristics.get(position).portidentified,
+                        destPort = light_characteristics.get(
+                                position
+                        ).port,
+                        _IP = light_characteristics.get(position).IP,
+                        lIGHT = light_characteristics.get(position)
                 )
 
                 light_characteristics.get(position).sendUDP()
             } else {
-                light_characteristics.get(position).setstringtosend (
-                    "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}")
+                light_characteristics.get(position).setstringtosend(
+                        "{\"GLights\":0,\"red\":0, \"green\":0 , \"blue\":0,  \"alpha\":0}")
 
                 viewHolder.imageView3.setImageResource(R.drawable.ic_baseline_toggle_off_24);
                 /*imgid_on[position] = R.drawable.ic_baseline_toggle_off_24*/
@@ -605,15 +646,15 @@ class ContactsAdapter(
                 (myFragment as SecondFragment).deactivatedraw = 1
                 (myFragment as SecondFragment).changeseekbarwhite(light_characteristics.get(position).Sint)
                 (myFragment as SecondFragment).changeseekbarbrigthness(
-                    light_characteristics.get(
-                        position
-                    ).Vint
+                        light_characteristics.get(
+                                position
+                        ).Vint
                 )
 
                 (myFragment as SecondFragment).myCanvasView.drawstuff(
-                    light_characteristics.get(
-                        position
-                    ).modifiedcolor
+                        light_characteristics.get(
+                                position
+                        ).modifiedcolor
                 )
 
 
@@ -701,6 +742,8 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
 
 class MainActivity : AppCompatActivity() {
 
+    var  hsv_music: FloatArray = FloatArray(3)
+    var mMediaPlayer: MediaPlayer?=null
     lateinit var  vpPager: ViewPager2
 
     lateinit var Scanwifi:scanwifi
@@ -736,11 +779,14 @@ class MainActivity : AppCompatActivity() {
 
     var listofdevices: MutableList<MutableList<String>>? = null
 
+    var tempSongList: MutableList<Song>? = null
+
+    var fftfunction:DoFFT=DoFFT(this)
 
 
     public fun setdata(
             red: Int = 255, green: Int = 255, blue: Int = 255,
-            white: Int = 0, Sint: Int = 100, Vint: Int = 100, modifiedcolor:Int=0
+            white: Int = 0, Sint: Int = 100, Vint: Int = 100, modifiedcolor: Int = 0
     ) {
         light_characteristics[nn.n].setmodifiedcolor(modifiedcolor)
                 light_characteristics[nn.n].setcolostring(red, green, blue, white, Sint, Vint, modifiedcolor)
@@ -748,7 +794,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    public fun setdata( specialcommand:Int
+    public fun setdata(specialcommand: Int
     ) {
 
             light_characteristics[nn.n].setcolostring(specialcommand, menuArray[specialcommand])
@@ -830,7 +876,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun searchforlight(n:String,lightlist:MutableList<lightinformation>):lightinformation?
+    fun searchforlight(n: String, lightlist: MutableList<lightinformation>):lightinformation?
     {
         for (k in lightlist)
         {
@@ -840,13 +886,87 @@ class MainActivity : AppCompatActivity() {
         return null
     }
 
-    fun openSomeActivityForResult(intent:Intent){
+    fun openSomeActivityForResult(intent: Intent){
         resultLauncher.launch(intent)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity_ = this
+
+
+        var REQUEST_CODE: Int =0
+        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this as MainActivity,
+                            android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this as MainActivity,
+                        arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
+                        REQUEST_CODE)
+
+                // REQUEST_CODE is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
+                        android.Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this as MainActivity,
+                            android.Manifest.permission.RECORD_AUDIO)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this as MainActivity,
+                        arrayOf(android.Manifest.permission.RECORD_AUDIO),
+                        REQUEST_CODE)
+
+                // REQUEST_CODE is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+
+        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
+                        android.Manifest.permission.MODIFY_AUDIO_SETTINGS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Permission is not granted
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this as MainActivity,
+                            android.Manifest.permission.MODIFY_AUDIO_SETTINGS)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this as MainActivity,
+                        arrayOf(android.Manifest.permission.MODIFY_AUDIO_SETTINGS),
+                        REQUEST_CODE)
+
+                // REQUEST_CODE is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+
+
         //thiscontext = activity_!!.applicationContext
         Scanwifi=scanwifi(activity_ as Activity)
 
@@ -862,6 +982,42 @@ class MainActivity : AppCompatActivity() {
         image_music.setImageResource(R.drawable.ic_audiotrack_24px)
         image_mic.setImageResource(R.drawable.ic_mic_24px)
         image_group.setImageResource(R.drawable.ic_baseline_subject_24)
+
+        image_music.setOnClickListener (){
+            tempSongList= mutableListOf()
+            getSongList(this, tempSongList)
+            var song: Uri = tempSongList!!.get(3).uriImage
+            //val song = resources.getIdentifier("lolas1", "raw", packageName)
+            if (mMediaPlayer==null) {
+
+                /*val audioSessionId = this.getSystemService(AUDIO_SERVICE).getAudioSessionId()
+                if (audioSessionId != AudioManager.ERROR) {
+                    mMediaPlayer?.setAudioSessionId(audioSessionId);
+                }*/
+
+                mMediaPlayer = MediaPlayer.create(this, song)
+
+                mMediaPlayer?.setLooping(true);
+                mMediaPlayer?.start();
+                var si=mMediaPlayer?.getAudioSessionId()
+
+
+
+                fftfunction.link(mMediaPlayer)
+            }
+            else
+            {
+
+                mMediaPlayer?.stop();
+                mMediaPlayer?.release();
+                mMediaPlayer=null
+                hsv_music[0]=-1.0f
+
+                }
+
+            var stop=0
+        }
+
 
         image_group.setOnClickListener (){
             val context: Context = it.getContext()

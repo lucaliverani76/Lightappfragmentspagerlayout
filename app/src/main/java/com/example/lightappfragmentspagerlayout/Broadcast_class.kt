@@ -209,6 +209,9 @@ class UDPBroadcaster(var mContext: Context) {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
+                if ((LIGHT?.hsv?.get(0)!! >-1.0f)) {
+                    LIGHT?.sethsv()
+                }
                 buffer = LIGHT?.stringtosend!!.toByteArray()
                 if (LIGHT?.stringtosend==stringold){cc=kotlin.math.min(cc+1,3)}
                 else {cc=0}

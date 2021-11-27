@@ -206,6 +206,7 @@ class FirstFragment : Fragment() {
 
                             (activity as MainActivity).light_characteristicsglobal.get(u).udpbroadcaster=UDPBroadcaster(thiscontext)
                             (activity as MainActivity).light_characteristicsglobal.get(u).Type_="Light"
+                            (activity as MainActivity).light_characteristicsglobal.get(u).hsv=(activity as MainActivity).hsv_music
                         }
                     }
 

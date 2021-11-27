@@ -67,14 +67,14 @@ class scanwifi(var activity_: Activity){
 
             // Permission is not granted
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mContext as MainActivity,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity_ as MainActivity,
                             android.Manifest.permission.ACCESS_COARSE_LOCATION)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(mContext as MainActivity,
+                ActivityCompat.requestPermissions(activity_ as MainActivity,
                         arrayOf(android.Manifest.permission.ACCESS_COARSE_LOCATION),
                         REQUEST_CODE)
 
@@ -84,20 +84,20 @@ class scanwifi(var activity_: Activity){
             }
         }
 
-        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
+        if (ContextCompat.checkSelfPermission(mContext,
                         android.Manifest.permission.INTERNET)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Permission is not granted
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mContext as MainActivity,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity_ as MainActivity,
                             android.Manifest.permission.INTERNET)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(mContext as MainActivity,
+                ActivityCompat.requestPermissions(activity_ as MainActivity,
                         arrayOf(android.Manifest.permission.INTERNET),
                         REQUEST_CODE)
 
@@ -108,20 +108,20 @@ class scanwifi(var activity_: Activity){
         }
 
 
-        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
+        if (ContextCompat.checkSelfPermission(mContext,
                         android.Manifest.permission.ACCESS_WIFI_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Permission is not granted
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mContext as MainActivity,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity_ as MainActivity,
                             android.Manifest.permission.ACCESS_WIFI_STATE)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(mContext as MainActivity,
+                ActivityCompat.requestPermissions(activity_ as MainActivity,
                         arrayOf(android.Manifest.permission.ACCESS_WIFI_STATE),
                         REQUEST_CODE)
 
@@ -131,20 +131,20 @@ class scanwifi(var activity_: Activity){
             }
         }
 
-        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
+        if (ContextCompat.checkSelfPermission(mContext,
                         android.Manifest.permission.CHANGE_WIFI_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Permission is not granted
             // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mContext as MainActivity,
+            if (ActivityCompat.shouldShowRequestPermissionRationale(activity_ as MainActivity,
                             android.Manifest.permission.CHANGE_WIFI_STATE)) {
                 // Show an explanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
             } else {
                 // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(mContext as MainActivity,
+                ActivityCompat.requestPermissions(activity_ as MainActivity,
                         arrayOf(android.Manifest.permission.CHANGE_WIFI_STATE),
                         REQUEST_CODE)
 
