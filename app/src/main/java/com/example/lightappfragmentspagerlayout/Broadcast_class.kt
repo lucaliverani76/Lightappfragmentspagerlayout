@@ -197,34 +197,44 @@ class UDPBroadcaster(var mContext: Context) {
 
 
     public fun sendUDP() {
-        var cc:Int=0
-        var offn:Int=0
-        //this.open(SEND_PORT, DEST_PORT) //Open the broadcast
-        var buffer: ByteArray = LIGHT?.stringtosend!!.toByteArray()
-        var stringold=LIGHT?.stringtosend
-        Thread(Runnable {
-            while (!isClosed) {
-                try {
-                    Thread.sleep(20) //500ms delay
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-                if ((LIGHT?.linkedtomusic==true) && (LIGHT?.hsv?.get(3)!!>0.1f) && (LIGHT?.stateonoff==true)) {
-                    LIGHT?.sethsv()
-                }
-                buffer = LIGHT?.stringtosend!!.toByteArray()
-                if (LIGHT?.stringtosend==stringold){cc=kotlin.math.min(cc+1,3)}
-                else {cc=0}
-                if (LIGHT?.stateonoff==false){offn=kotlin.math.min(offn+1,3)}
-                else {offn=0}
 
-                if (cc<3 && offn<3)
-                {this.sendPacketx(buffer)} //Send broadcast packet
-                //Log.v("TAG","$TAG data: ${String(buffer)}")
-                stringold=LIGHT?.stringtosend
-            }
-            this.close() //Close the broadcast
-        }).start()
+        if (LIGHT!=null) {
+            var cc: Int = 0
+            var offn: Int = 0
+            //this.open(SEND_PORT, DEST_PORT) //Open the broadcast
+            var buffer: ByteArray = LIGHT?.stringtosend!!.toByteArray()
+            var stringold = LIGHT?.stringtosend
+            Thread(Runnable {
+                while (!isClosed) {
+                    try {
+                        Thread.sleep(20) //500ms delay
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                    if ((LIGHT?.linkedtomusic == true) && (LIGHT?.hsv?.get(3)!! > 0.1f) && (LIGHT?.stateonoff == true)) {
+                        LIGHT?.sethsv()
+                    }
+                    buffer = LIGHT?.stringtosend!!.toByteArray()
+                    if (LIGHT?.stringtosend == stringold) {
+                        cc = kotlin.math.min(cc + 1, 3)
+                    } else {
+                        cc = 0
+                    }
+                    if (LIGHT?.stateonoff == false) {
+                        offn = kotlin.math.min(offn + 1, 3)
+                    } else {
+                        offn = 0
+                    }
+
+                    if (cc < 3 && offn < 3) {
+                        this.sendPacketx(buffer)
+                    } //Send broadcast packet
+                    //Log.v("TAG","$TAG data: ${String(buffer)}")
+                    stringold = LIGHT?.stringtosend
+                }
+                this.close() //Close the broadcast
+            }).start()
+        }
     }
 
 

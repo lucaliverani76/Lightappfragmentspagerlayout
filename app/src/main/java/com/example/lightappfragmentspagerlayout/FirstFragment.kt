@@ -205,6 +205,15 @@ class FirstFragment : Fragment() {
                             (activity as MainActivity).light_characteristicsglobal.get(u).port = temptitle?.get(2).toInt()
 
                             (activity as MainActivity).light_characteristicsglobal.get(u).udpbroadcaster=UDPBroadcaster(thiscontext)
+
+                            (activity as MainActivity).light_characteristicsglobal.get(u).udpbroadcaster?.open(
+                                localPort = 10000 + (activity as MainActivity).light_characteristicsglobal.get(u).portidentified,
+                                destPort = (activity as MainActivity).light_characteristicsglobal.get(u).port,
+                                _IP = (activity as MainActivity).light_characteristicsglobal.get(u).IP,
+                                lIGHT = (activity as MainActivity).light_characteristicsglobal.get(u)
+                            )
+
+
                             (activity as MainActivity).light_characteristicsglobal.get(u).Type_="Light"
                             (activity as MainActivity).light_characteristicsglobal.get(u).hsv=(activity as MainActivity).hsv_music
                         }

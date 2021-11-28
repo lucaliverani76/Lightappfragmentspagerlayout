@@ -18,12 +18,12 @@ class DoFFT (var activity_: Activity){
     /*PARAMETERS*/
     public var filter: Double = 0.1
     public var maxfreq=5000
-    public val fullintensity_db=8
-    public val zerointensity_db=5
+    public val fullintensity_db=7
+    public val zerointensity_db=4
     public val intensityspan=0.7
-    public val intensity_thr=0.5
-    public val timetoexplorecolorspan=4.0
-    public val colorjump=0.2
+    public val intensity_thr=5
+    public val timetoexplorecolorspan=0.1
+    public val colorjump=0.3
 
     /*VARIABLES*/
     public var averagelevel_s: Double= 0.0

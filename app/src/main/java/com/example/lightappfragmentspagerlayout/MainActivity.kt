@@ -152,6 +152,12 @@ class lightinformation(
         {sublights.get(n).stringtosend=s}
     }
 
+    public fun linkto_music(linktomusic:Boolean){
+        this.linkedtomusic=linktomusic
+        for (n in 0..sublights.size-1)
+        {sublights.get(n).linkedtomusic=linktomusic}
+    }
+
     public fun sethsv(){
 
         var newH=(this.hsvlocal[0]+this.hsv[0]*360)
@@ -604,8 +610,7 @@ class ContactsAdapter(
             {
                 if (light_characteristics.get(position).Type_!="AP")
                 {
-                    light_characteristics.get(position).linkedtomusic= !(light_characteristics.get(position).linkedtomusic)
-
+                    light_characteristics.get(position).linkto_music(!(light_characteristics.get(position).linkedtomusic))
                 }
             }
 
@@ -623,14 +628,14 @@ class ContactsAdapter(
                             light_characteristics.get(position).stringtosend_old)
 
 
-                        light_characteristics.get(position).udpbroadcaster?.open(
+                     /*   light_characteristics.get(position).udpbroadcaster?.open(
                             localPort = 10000 + light_characteristics.get(position).portidentified,
                             destPort = light_characteristics.get(
                                 position
                             ).port,
                             _IP = light_characteristics.get(position).IP,
                             lIGHT = light_characteristics.get(position)
-                        )
+                        )*/
 
                         light_characteristics.get(position).sendUDP()
                     } else {
@@ -910,77 +915,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
          activity_ = this
 
+        var Px:Permissions=Permissions()
+        Px.getPermissions(activity_ as MainActivity)
 
-        var REQUEST_CODE: Int =0
-        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this as MainActivity,
-                            android.Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this as MainActivity,
-                        arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        REQUEST_CODE)
-
-                // REQUEST_CODE is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-
-        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
-                        android.Manifest.permission.RECORD_AUDIO)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this as MainActivity,
-                            android.Manifest.permission.RECORD_AUDIO)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this as MainActivity,
-                        arrayOf(android.Manifest.permission.RECORD_AUDIO),
-                        REQUEST_CODE)
-
-                // REQUEST_CODE is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
-
-
-        if (ContextCompat.checkSelfPermission(activity_ as MainActivity,
-                        android.Manifest.permission.MODIFY_AUDIO_SETTINGS)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            // Permission is not granted
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this as MainActivity,
-                            android.Manifest.permission.MODIFY_AUDIO_SETTINGS)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this as MainActivity,
-                        arrayOf(android.Manifest.permission.MODIFY_AUDIO_SETTINGS),
-                        REQUEST_CODE)
-
-                // REQUEST_CODE is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        }
 
 
         //thiscontext = activity_!!.applicationContext
