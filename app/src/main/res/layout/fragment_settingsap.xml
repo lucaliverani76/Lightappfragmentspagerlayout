@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Settingsap">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ImageView
+            android:id="@+id/imageView_back2"
+            android:layout_width="46dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_mybackicon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/editbattery"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="100%"
+            app:layout_constraintBottom_toBottomOf="@+id/Battery"
+            app:layout_constraintEnd_toEndOf="@+id/editLightName" />
+
+        <TextView
+            android:id="@+id/editconnectName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:text="Connect to:"
+            app:layout_constraintBottom_toTopOf="@+id/recview_modes"
+            app:layout_constraintStart_toStartOf="@+id/Battery"
+            app:layout_constraintTop_toBottomOf="@+id/Battery" />
+
+        <TextView
+            android:id="@+id/connectName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Connect name"
+            app:layout_constraintBottom_toBottomOf="@+id/editconnectName"
+            app:layout_constraintEnd_toEndOf="@+id/editbattery"
+            app:layout_constraintStart_toEndOf="@+id/editconnectName" />
+
+        <Button
+            android:id="@+id/buttonAP"
+            android:layout_width="37dp"
+            android:layout_height="30dp"
+            android:text=" "
+            app:layout_constraintBottom_toBottomOf="@+id/connectName"
+            app:layout_constraintEnd_toEndOf="@+id/imageView" />
+
+        <TextView
+            android:id="@+id/LightName"
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:text="Light Name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView_back2" />
+
+        <TextView
+            android:id="@+id/Battery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="24dp"
+            android:text="Battery Charge"
+            app:layout_constraintStart_toStartOf="@+id/LightName"
+            app:layout_constraintTop_toBottomOf="@+id/LightName" />
+
+        <EditText
+            android:id="@+id/editLightName"
+            android:layout_width="0dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:ems="10"
+            android:inputType="text"
+            android:text="_"
+            app:layout_constraintBottom_toBottomOf="@+id/LightName"
+            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintStart_toEndOf="@+id/LightName" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/editLightName"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintBottom_toBottomOf="@+id/editbattery"
+            app:layout_constraintEnd_toEndOf="@+id/buttonAP"
+            tools:src="@tools:sample/avatars" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recview_modes"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/button_border"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonAP" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</FrameLayout>

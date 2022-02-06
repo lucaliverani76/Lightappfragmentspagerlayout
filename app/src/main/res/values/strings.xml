@@ -4,7 +4,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="programs_array">
-        <item>Color Picker</item>
+        <item>Internal microphone</item>
         <item>Color_Change</item>
         <item>Strobe_Color</item>
         <item>Strobe_White</item>

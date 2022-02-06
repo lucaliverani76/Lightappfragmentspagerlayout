@@ -30,10 +30,12 @@
         android:roundIcon="@mipmap/moobiled_round"
         android:supportsRtl="true"
         android:testOnly="false"
-        android:theme="@style/Theme.Lightappfragmentspagerlayout">
+        android:theme="@style/BW">
+        <!--android:theme="@style/Theme.Lightappfragmentspagerlayout">-->
+
         <!--android:debuggable="true" -->
         <!--tools:ignore="HardcodedDebugMode"> -->
-        <activity android:name=".Group_activity"></activity>
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").

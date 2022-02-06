@@ -8,7 +8,6 @@ package com.example.lightappfragmentspagerlayout
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.*
 import android.media.MediaPlayer
 import android.net.Uri
@@ -17,25 +16,19 @@ import android.util.AttributeSet
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 
 class lightinformation(
@@ -76,7 +69,7 @@ class lightinformation(
     public var udpbroadcaster:UDPBroadcaster?=null
 
     public fun setcolostring(
-            red: Int = 255, green: Int = 255, blue: Int = 255,
+            red: Int = 0, green: Int = 0, blue: Int = 0,
             white: Int = 0, Sint: Int = 100, Vint: Int = 100, modifiedcolor: Int
     ) {
 
@@ -301,22 +294,29 @@ class MyCanvasView: AppCompatImageView {
     public var White_:Int=0
     public var Vint:Int=100
     public var Sint:Int=100
+    public lateinit var myFragment:Fragment
 
 
-
-    fun init()
+    fun init(context: Context)
     {
         extraBitmap = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
+        val activity = context as Activity
+
+        myFragment =
+            (activity as MainActivity).supportFragmentManager.findFragmentByTag("f1")!!
+
+
+
     }
 
     public constructor (context: Context):super(context)
     {
-        init()
+        init(context)
     }
 
     public constructor (context: Context, attrs: AttributeSet?):super(context, attrs)
     {
-        init()
+        init(context)
     }
 
     public constructor (context: Context, attrs: AttributeSet, defStyleAttr: Int):super(
@@ -325,7 +325,7 @@ class MyCanvasView: AppCompatImageView {
             defStyleAttr
     )
     {
-        init()
+        init(context)
     }
 
     private lateinit var extraCanvas: Canvas
@@ -344,9 +344,11 @@ class MyCanvasView: AppCompatImageView {
 
         if (::extraBitmap.isInitialized) extraBitmap.recycle()
 
-        extraBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        var WW=Math.max(width,10)
+        var HH=Math.max(height,10)
+        extraBitmap = Bitmap.createBitmap(WW, HH, Bitmap.Config.ARGB_8888)
 
-        val getmin:Int=kotlin.math.min(height, width)
+        val getmin:Int=kotlin.math.min(HH, WW)
 
         val original = BitmapFactory.decodeResource(resources, R.drawable.pngegg)
 
@@ -377,8 +379,8 @@ class MyCanvasView: AppCompatImageView {
 
 
 
-        var center_x = (width/2).toFloat()
-        var center_y = (height/2).toFloat()
+        var center_x = (WW/2).toFloat()
+        var center_y = (HH/2).toFloat()
         var radius = (otherimage.getWidth()/5).toFloat()
 
         // draw circle
@@ -416,6 +418,16 @@ class MyCanvasView: AppCompatImageView {
         ) {
             var pixel = extraBitmap.getPixel(motionTouchEventX.toInt(), motionTouchEventY.toInt());
             unmodifiedcolor = pixel
+
+            var redValue = Color.red(pixel);
+            var blueValue = Color.blue(pixel);
+            var greenValue = Color.green(pixel)
+
+            var  hsv = FloatArray(3)
+            val RDBW= Color.RGBToHSV(redValue, greenValue, blueValue, hsv);
+            var Hvalue=(hsv[0]/360f*100).toInt()
+            (myFragment as SecondFragment).changeseekbarH(Hvalue)
+
             drawstuff()
         }
 
@@ -467,9 +479,9 @@ class MyCanvasView: AppCompatImageView {
         hsv[2]=V
 
 
-        var redValue_m :Int = 255
-        var blueValue_m :Int = 255
-        var greenValue_m :Int = 255
+        var redValue_m :Int = 0
+        var blueValue_m :Int = 0
+        var greenValue_m :Int = 0
         var white_m:Int = 255
 
         val andreacrazyidea=true
@@ -557,7 +569,7 @@ class ContactsAdapter(
     // Used to cache the views within the item layout for fast access
     inner class ViewHolder(listItemView: View) : RecyclerView.ViewHolder(listItemView) {
 
-        val textView = listItemView.findViewById(R.id.textView_x) as TextView
+        val textView = listItemView.findViewById(R.id.textView_x) as Button
         val textView2 = listItemView.findViewById(R.id.textView2) as TextView
         val imageView = listItemView.findViewById(R.id.imageView1) as ImageView
         val imageView2 = listItemView.findViewById(R.id.imageView2) as ImageView
@@ -582,7 +594,7 @@ class ContactsAdapter(
         // Get the data model based on position
         //val contact: Contact = mContacts.get(position)
 
-        viewHolder.textView.text = "       " //Type_[position]
+        //viewHolder.textView.text = "       " //Type_[position]
         //val mecolor: Int = 255 and 0xff shl 24 or (light_characteristics.get(position).red and 0xff shl 16) or (light_characteristics.get(position).green and 0xff shl 8) or (light_characteristics.get(position).blue and 0xff)
         viewHolder.textView.setBackgroundColor(light_characteristics.get(position).modifiedcolor)
 
@@ -665,15 +677,25 @@ class ContactsAdapter(
 
                     val myFragment =
                         (activity as MainActivity).supportFragmentManager.findFragmentByTag("f1")
-
-                    (myFragment as SecondFragment).spin_.setSelection(light_characteristics.get(position).ActionType)
+                    (activity as MainActivity).image_start.setVisibility(View.INVISIBLE)
+                    /*(myFragment as SecondFragment).spin_.setSelection(light_characteristics.get(position).ActionType)*/
                     (myFragment as SecondFragment).deactivatedraw = 1
-                    (myFragment as SecondFragment).changeseekbarwhite(light_characteristics.get(position).Sint)
+                    (myFragment as SecondFragment).Nameoflight.setText(light_characteristics.get(position).NameofAP)
+                    (myFragment as SecondFragment).changeseekbarwhite(kotlin.math.round((light_characteristics.get(position).white.toFloat()/255f*100f).toFloat()).toInt())
                     (myFragment as SecondFragment).changeseekbarbrigthness(
                         light_characteristics.get(
                             position
                         ).Vint
                     )
+
+
+                    var redValue = Color.red(light_characteristics.get(position).modifiedcolor);
+                    var blueValue = Color.blue(light_characteristics.get(position).modifiedcolor);
+                    var greenValue = Color.green(light_characteristics.get(position).modifiedcolor);
+                    var  hsv = FloatArray(3)
+                    val RDBW= Color.RGBToHSV(redValue, greenValue, blueValue, hsv);
+                    var Hvalue=(kotlin.math.round((hsv[0]/360f*100))).toInt()
+                    (myFragment as SecondFragment).changeseekbarH(Hvalue)
 
                     (myFragment as SecondFragment).myCanvasView.drawstuff(
                         light_characteristics.get(
@@ -751,7 +773,22 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
             //(activity as MainActivity).drawfragment= SecondFragment()
             return SecondFragment()
         }
-        return SecondFragment()
+        if (position==2){
+            //val context: Context = fragmentActivity.getContext()
+            //val myIntent = Intent(context, light_colors_and_features::class.java)
+            //val activity = context as Activity
+            //(activity as MainActivit
+             return groups()
+        }
+        if (position==3){
+            //val context: Context = fragmentActivity.getContext()
+            //val myIntent = Intent(context, light_colors_and_features::class.java)
+            //val activity = context as Activity
+            //(activity as MainActivit
+            return Settingsap()
+        }
+
+        return groups()
     }
 
 
@@ -760,7 +797,7 @@ class ViewPagerAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
     }
 
     companion object {
-        private const val CARD_ITEM_SIZE = 2
+        private const val CARD_ITEM_SIZE = 4
     }
 }
 
@@ -777,11 +814,14 @@ class MainActivity : AppCompatActivity() {
 
     var localadapter:ViewPagerAdapter? = null
     lateinit var image_music:ImageView
-    lateinit var image_mic:ImageView
+    lateinit var image_palette:ImageView
     lateinit var image_group:ImageView
+    lateinit var image_settings:ImageView
+    lateinit var image_start:ImageView
+    lateinit var extraBitmap: Bitmap
 
     lateinit var menuArray: Array<String>
-
+    lateinit var listofdevices_string: Array<String>
 
 
     lateinit var viewModel: EventViewModel
@@ -806,7 +846,7 @@ class MainActivity : AppCompatActivity() {
 
 
     public fun setdata(
-            red: Int = 255, green: Int = 255, blue: Int = 255,
+            red: Int = 0, green: Int = 0, blue: Int = 0,
             white: Int = 0, Sint: Int = 100, Vint: Int = 100, modifiedcolor: Int = 0
     ) {
         light_characteristics[nn.n].setmodifiedcolor(modifiedcolor)
@@ -896,6 +936,66 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+public fun Shownewlist(){
+        thegroups=outputgroups(listofdevices_string)
+        light_characteristics= mutableListOf()
+        for (group_ in thegroups)
+        {
+            if (group_.ISGROUP) {
+                light_characteristicsglobal.add(lightinformation(NameofAP = group_.nameofgroup))
+                var sss= light_characteristicsglobal.size-1
+                light_characteristicsglobal.get(sss).IP = "0.0.0.0"
+                light_characteristicsglobal.get(sss).port = 0
+                /*light_characteristicsglobal.get(sss).udpbroadcaster*/
+                light_characteristicsglobal.get(sss).Type_ = "Light"
+                for (r in 1..group_.listoflightsingroup.size-1)
+                {
+                    var x: lightinformation? = searchforlight(group_.listoflightsingroup[r], light_characteristicsglobal)
+                    x?.let { light_characteristicsglobal.get(sss).sublights.add(it) }
+                }
+                println()
+                light_characteristics.add(light_characteristicsglobal.get(sss))
+            }
+            else
+            {
+                var x: lightinformation? = searchforlight(group_.nameofgroup, light_characteristicsglobal)
+                x?.let { light_characteristics.add(it) }
+            }
+
+            for (z in light_characteristicsglobal){
+                if (z.Type_=="AP")
+                    light_characteristics.add(z)
+            }
+
+        }
+
+
+
+        val myFragment = supportFragmentManager.findFragmentByTag("f0")
+
+
+        (myFragment as FirstFragment).rv = (myFragment as FirstFragment).layoutInflater_view.findViewById<View>(R.id.RecView_devices) as RecyclerView
+
+
+
+        val adapter = ContactsAdapter(
+            /*Type_.toTypedArray(),
+            Title_.toTypedArray(),
+            imgid_dots.toTypedArray(),
+            imgid_edit.toTypedArray(),
+            imgid_on.toTypedArray(),*/
+            light_characteristics,
+            /*(activity as MainActivity).listofsender,*/
+            nn
+        )
+
+
+
+        (myFragment as FirstFragment).rv.adapter = adapter
+        // Set layout manager to position the items
+        (myFragment as FirstFragment).rv.layoutManager = LinearLayoutManager(this)
+    }
+
 
     fun searchforlight(n: String, lightlist: MutableList<lightinformation>):lightinformation?
     {
@@ -930,11 +1030,16 @@ class MainActivity : AppCompatActivity() {
 
 
         image_music = findViewById<View>(R.id.image_music) as ImageView
-        image_mic = findViewById<View>(R.id.image_mic) as ImageView
+        image_palette = findViewById<View>(R.id.image_Palette) as ImageView
         image_group = findViewById<View>(R.id.image_group) as ImageView
+        image_settings = findViewById<View>(R.id.image_settings) as ImageView
+        image_start = findViewById<View>(R.id.imagestart) as ImageView
+
         image_music.setImageResource(R.drawable.ic_audiotrack_24px)
-        image_mic.setImageResource(R.drawable.ic_mic_24px)
+        image_palette.setImageResource(R.drawable.ic_baseline_color_lens_24)
         image_group.setImageResource(R.drawable.ic_baseline_subject_24)
+        image_settings.setImageResource(R.drawable.ic_baseline_settings_24)
+        image_start.setImageResource(R.drawable.footer)
 
 
         image_music.setOnClickListener (){
@@ -942,7 +1047,8 @@ class MainActivity : AppCompatActivity() {
             getSongList(this, tempSongList)
             var song: Uri = tempSongList!!.get(3).uriImage
             //val song = resources.getIdentifier("lolas1", "raw", packageName)
-            if (mMediaPlayer==null) {
+
+            if ((mMediaPlayer==null)) {
 
                 /*val audioSessionId = this.getSystemService(AUDIO_SERVICE).getAudioSessionId()
                 if (audioSessionId != AudioManager.ERROR) {
@@ -954,8 +1060,6 @@ class MainActivity : AppCompatActivity() {
                 mMediaPlayer?.setLooping(true);
                 mMediaPlayer?.start();
                 var si=mMediaPlayer?.getAudioSessionId()
-
-
 
                 fftfunction.link(mMediaPlayer)
                 hsv_music[3]=1f
@@ -975,15 +1079,12 @@ class MainActivity : AppCompatActivity() {
 
 
         image_group.setOnClickListener (){
-            val context: Context = it.getContext()
-            val myIntent = Intent(context, Group_activity::class.java)
+            vpPager.setCurrentItem(2)
 
-            val listofdevices: MutableList<String> = ArrayList()
-            for (t in light_characteristics) {
-                listofdevices.add((t as lightinformation).NameofAP)
-            }
-            myIntent.putExtra("EXTRA_SESSION_ID", listofdevices.toTypedArray());
-            openSomeActivityForResult(myIntent)
+        }
+
+        image_settings.setOnClickListener (){
+            vpPager.setCurrentItem(3)
 
         }
 
@@ -1056,7 +1157,11 @@ class MainActivity : AppCompatActivity() {
         (myFragment as SecondFragment).backsecondfragment()
     }
 
-      else {vpPager.setCurrentItem(0)}
+      else
+      {
+        vpPager.setCurrentItem(0)
+        image_start.setVisibility(View.VISIBLE)
+      }
 
   }
 
