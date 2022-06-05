@@ -52,6 +52,7 @@ class scanwifi(var activity_: Activity){
         scandone=false
         wifiManager.startScan()
         mContext.registerReceiver(broadcastReceiver, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
+
     }
 
 
@@ -65,7 +66,7 @@ class scanwifi(var activity_: Activity){
 
         for (result in resultList) {
             ll= result.SSID.toString()
-            if (("MobileD_" in ll)  && !(ll in wifiManager.connectionInfo.ssid)) {
+            if ((("MobileD_" in ll) || ("Voda" in ll)) && !(ll in wifiManager.connectionInfo.ssid)) {
                 //+ " " + result.BSSID.toString() + " " + result.level.toString()
                 list.add(ll) //result.BSSID + " " + result.level)
             }

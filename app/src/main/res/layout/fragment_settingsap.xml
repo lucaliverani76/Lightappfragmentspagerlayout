@@ -11,6 +11,48 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
+        <TextView
+            android:id="@+id/speedtext"
+            android:layout_width="105dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_horizontal"
+
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="32dp"
+            android:gravity="left"
+            android:text="Speed 100%"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/warmwhite"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/wifi"
+            tools:text="Speed 100%" />
+
+        <SeekBar
+            android:id="@+id/seekBar3"
+            style="@style/MySeekBar"
+            android:layout_width="0dp"
+            android:layout_height="14dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:maxHeight="20dp"
+            android:minHeight="20dp"
+            android:progress="100"
+            app:layout_constraintBottom_toBottomOf="@+id/speedtext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/speedtext"
+            app:layout_constraintTop_toTopOf="@+id/speedtext" />
+
+        <ImageView
+            android:id="@+id/imageView_symbol3"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:minHeight="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/avatars" />
+
         <ImageView
             android:id="@+id/imageView_back2"
             android:layout_width="46dp"
@@ -25,87 +67,77 @@
             android:id="@+id/editbattery"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
             android:text="100%"
             app:layout_constraintBottom_toBottomOf="@+id/Battery"
-            app:layout_constraintEnd_toEndOf="@+id/editLightName" />
+            app:layout_constraintStart_toEndOf="@+id/Battery" />
 
         <TextView
             android:id="@+id/editconnectName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="8dp"
             android:text="Connect to:"
-            app:layout_constraintBottom_toTopOf="@+id/recview_modes"
-            app:layout_constraintStart_toStartOf="@+id/Battery"
-            app:layout_constraintTop_toBottomOf="@+id/Battery" />
+            app:layout_constraintStart_toEndOf="@+id/wifi"
+            app:layout_constraintTop_toTopOf="@+id/wifi" />
 
         <TextView
             android:id="@+id/connectName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:text="Connect name"
-            app:layout_constraintBottom_toBottomOf="@+id/editconnectName"
-            app:layout_constraintEnd_toEndOf="@+id/editbattery"
-            app:layout_constraintStart_toEndOf="@+id/editconnectName" />
-
-        <Button
-            android:id="@+id/buttonAP"
-            android:layout_width="37dp"
-            android:layout_height="30dp"
-            android:text=" "
-            app:layout_constraintBottom_toBottomOf="@+id/connectName"
-            app:layout_constraintEnd_toEndOf="@+id/imageView" />
-
-        <TextView
-            android:id="@+id/LightName"
-            android:layout_width="wrap_content"
-            android:layout_height="24dp"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="24dp"
-            android:text="Light Name"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView_back2" />
+            android:layout_marginEnd="32dp"
+            android:text=" "
+            app:layout_constraintBottom_toBottomOf="@+id/editconnectName"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/editconnectName" />
 
         <TextView
             android:id="@+id/Battery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="28dp"
             android:layout_marginTop="24dp"
             android:text="Battery Charge"
-            app:layout_constraintStart_toStartOf="@+id/LightName"
-            app:layout_constraintTop_toBottomOf="@+id/LightName" />
+            app:layout_constraintStart_toEndOf="@+id/battery"
+            app:layout_constraintTop_toBottomOf="@+id/imageView_back2" />
 
         <EditText
             android:id="@+id/editLightName"
+            style="@style/Widget.AppCompat.EditText"
             android:layout_width="0dp"
-            android:layout_height="22dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:ems="10"
+            android:ems="3"
             android:inputType="text"
             android:text="_"
-            app:layout_constraintBottom_toBottomOf="@+id/LightName"
-            app:layout_constraintEnd_toStartOf="@+id/imageView"
-            app:layout_constraintStart_toEndOf="@+id/LightName" />
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toStartOf="@+id/imageView_symbol3"
+            app:layout_constraintStart_toEndOf="@+id/imageView_back2"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/wifi"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginEnd="24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/editLightName"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/battery"
             tools:src="@tools:sample/avatars" />
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/battery"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginStart="24dp"
             app:layout_constraintBottom_toBottomOf="@+id/editbattery"
-            app:layout_constraintEnd_toEndOf="@+id/buttonAP"
+            app:layout_constraintStart_toStartOf="parent"
             tools:src="@tools:sample/avatars" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -113,13 +145,14 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="24dp"
             android:background="@drawable/button_border"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonAP" />
+            app:layout_constraintTop_toBottomOf="@+id/speedtext" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

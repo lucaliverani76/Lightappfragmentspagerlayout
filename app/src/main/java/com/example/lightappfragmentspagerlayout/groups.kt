@@ -10,10 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -258,7 +255,9 @@ class groups : Fragment() {
     lateinit var listofgroups:MutableList<Groups_>
 
     lateinit var buttonadd: Button
-    lateinit var tinput: TextInputEditText
+    lateinit var tinput: EditText
+
+    lateinit var imageView_symbol:ImageView
 
 
 
@@ -301,9 +300,13 @@ class groups : Fragment() {
         groupstructure= outputstrings(listofgroups)
 
 
-        tinput = layoutInflater_view.findViewById<View>(R.id.textInputEditText) as TextInputEditText
+        tinput = layoutInflater_view.findViewById<View>(R.id.textInputEditText) as EditText
         buttonadd = layoutInflater_view.findViewById<View>(R.id.button2) as Button
         imageback= layoutInflater_view.findViewById<View>(R.id.imageView_backx) as ImageView
+
+        imageView_symbol= layoutInflater_view.findViewById(R.id.imageView_symbol5)
+
+        imageView_symbol.setImageResource(R.mipmap.moobiled_foreground)
 
 
         imageback.setOnClickListener(){

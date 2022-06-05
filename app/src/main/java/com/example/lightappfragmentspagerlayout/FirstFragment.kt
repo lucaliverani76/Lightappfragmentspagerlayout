@@ -41,6 +41,8 @@ class FirstFragment : Fragment() {
     lateinit var Buttonconnect:Button
     lateinit var Buttoncancel:Button
 
+    lateinit var imageView_symbol:ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -84,7 +86,7 @@ class FirstFragment : Fragment() {
 
         //(activity as MainActivity?)?.setdata(value)
 
-
+        imageView_symbol= layoutInflater_view.findViewById(R.id.imageView_symbol2)
 
         button_Devices = layoutInflater_view.findViewById<View>(R.id.Scan_for_Devices) as Button
         probar= layoutInflater_view.findViewById<View>(R.id.progressBar) as ProgressBar
@@ -95,6 +97,8 @@ class FirstFragment : Fragment() {
         Buttonconnect= layoutInflater_view.findViewById<View>(R.id.button) as Button
         Buttoncancel= layoutInflater_view.findViewById<View>(R.id.button2) as Button
 
+        imageView_symbol.setImageResource(R.mipmap.moobiled_foreground)
+
         APtext.setVisibility(View.INVISIBLE);
         Ptext.setVisibility(View.INVISIBLE);
         PAssText.setVisibility(View.INVISIBLE);
@@ -103,6 +107,30 @@ class FirstFragment : Fragment() {
 
         probar.setVisibility(View.INVISIBLE);
         (activity as MainActivity?)?.broadcaster_receiver = UDPBroadcaster(thiscontext)
+
+        if ((activity as MainActivity).light_characteristics.size>0) {
+            rv = layoutInflater_view.findViewById<View>(R.id.RecView_devices) as RecyclerView
+            // Initialize contacts
+            // Create adapter passing in the sample user data
+
+
+            val adapter = ContactsAdapter(
+                    /*Type_.toTypedArray(),
+                Title_.toTypedArray(),
+                imgid_dots.toTypedArray(),
+                imgid_edit.toTypedArray(),
+                imgid_on.toTypedArray(),*/
+                    (activity as MainActivity).light_characteristics,
+                    /*(activity as MainActivity).listofsender,*/
+                    (activity as MainActivity).nn
+            )
+
+
+            // Attach the adapter to the recyclerview to populate items
+            rv.adapter = adapter
+            // Set layout manager to position the items
+            rv.layoutManager = LinearLayoutManager(thiscontext)
+        }
 
 
         Buttonconnect.setOnClickListener {
@@ -203,6 +231,9 @@ class FirstFragment : Fragment() {
                             (activity as MainActivity).light_characteristicsglobal.add(lightinformation(NameofAP = temptitle?.get(0) ))
                             (activity as MainActivity).light_characteristicsglobal.get(u).IP = temptitle.get(1)
                             (activity as MainActivity).light_characteristicsglobal.get(u).port = temptitle?.get(2).toInt()
+                            (activity as MainActivity).light_characteristicsglobal.get(u).nameofWifi = temptitle?.get(3)
+                            (activity as MainActivity).light_characteristicsglobal.get(u).battery = temptitle?.get(4)
+
 
                             (activity as MainActivity).light_characteristicsglobal.get(u).udpbroadcaster=UDPBroadcaster(thiscontext)
 

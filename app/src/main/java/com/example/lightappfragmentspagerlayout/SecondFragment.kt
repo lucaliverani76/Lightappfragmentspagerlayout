@@ -133,48 +133,56 @@ class SecondFragment : Fragment() {
 
 
         cbutton0.setOnClickListener {
-            if ((buttonstatus and 0x01u)>0u) {
-                buttonstatus = 0x00u
+            if (buttonstatus ==1u) {
+                setupbutton_disable()
+                buttonstatus = 0u
             }
             else{
 
 
-                buttonstatus = (buttonstatus and 0x00u) or 1u//shl 24
+                buttonstatus =  1u//shl 24
+                setupbutton_enable()
             }
-            setupbutton(0,0u)
+
         }
 
         cbutton1.setOnClickListener {
-            if ((buttonstatus  and 0x02u)>0u) {
-                buttonstatus = 0x00u
+            if (buttonstatus  ==2u) {
+                setupbutton_disable()
+                buttonstatus = 0u
             }
             else{
                 buttonstatus =  2u//shl 24
+                setupbutton_enable()
             }
-            setupbutton(0,1u)
+
         }
 
 
         cbutton2.setOnClickListener {
-            if ((buttonstatus  and 0x04u)>0u) {
-
-                buttonstatus = 0x00u
+            if (buttonstatus ==3u) {
+                setupbutton_disable()
+                buttonstatus = 0u
             }
             else{
 
-                buttonstatus =  4u//shl 24
+                buttonstatus =  3u//shl 24
+                setupbutton_enable()
             }
-            setupbutton(0,2u)
+
         }
 
         cbutton3.setOnClickListener {
-            if ((buttonstatus  and 0x08u)>0u) {
-                buttonstatus =  0x00u//shl 24
+            if (buttonstatus  ==4u) {
+                setupbutton_disable()
+                buttonstatus =  0u//shl 24
             }
             else{
-                buttonstatus =  8u//shl 24
+                buttonstatus =  4u//shl 24
+                setupbutton_enable()
+
             }
-            setupbutton(0,3u)
+
         }
 
 
@@ -265,7 +273,7 @@ class SecondFragment : Fragment() {
 
                 }*/
 
-                setupbutton(myCanvasView.modifiedcolor, 5u)
+                //setupbutton(myCanvasView.modifiedcolor, 5u)
 
 
             }
@@ -340,98 +348,150 @@ class SecondFragment : Fragment() {
     }
 
 
-    public fun setupbutton(colotoset:Int, buttonpressed:UInt){
+    public fun setupbutton(colotoset:Int){
 
         var background_: Drawable
 
-        if ((buttonstatus and 0x01u)>0u)
+        if (buttonstatus ==1u)
         {
-
-            cbutton0.setBackgroundResource(R.drawable.button_border_0)
-            background_ = cbutton0.getBackground()
-
-            if (buttonpressed!=0u) {
-                (background_ as GradientDrawable).setColor(colotoset)
-            }
             cbutton0.setBackgroundResource(R.drawable.button_border_0_t)
                 //(background0 as GradientDrawable).setStroke(dpToPx(3),0xFFFFFF)
             background_ = cbutton0.getBackground()
-            if (buttonpressed!=0u) {
+
             (background_ as GradientDrawable).setColor(colotoset)
-            }
 
-        }
-        else
-        {
-            cbutton0.setBackgroundResource(R.drawable.button_border_0)
+
         }
 
 
-        if ((buttonstatus and 0x02u)>0u)
+        if (buttonstatus ==2u)
         {
-            cbutton1.setBackgroundResource(R.drawable.button_border_1)
-            background_ = cbutton1.getBackground()
-
-            if (buttonpressed!=1u) {
-                (background_ as GradientDrawable).setColor(colotoset)
-            }
             cbutton1.setBackgroundResource(R.drawable.button_border_1_t)
             //(background0 as GradientDrawable).setStroke(dpToPx(3),0xFFFFFF)
             background_ = cbutton1.getBackground()
-            if (buttonpressed!=1u) {
-                (background_ as GradientDrawable).setColor(colotoset)
-            }
+
+            (background_ as GradientDrawable).setColor(colotoset)
+
 
         }
-        else
+
+        if (buttonstatus ==3u)
         {
-            cbutton1.setBackgroundResource(R.drawable.button_border_1)
-        }
-
-
-        if ((buttonstatus and 0x04u)>0u)
-        {
-            cbutton2.setBackgroundResource(R.drawable.button_border_2)
-            background_ = cbutton2.getBackground()
-
-            if (buttonpressed!=2u) {
-                (background_ as GradientDrawable).setColor(colotoset)
-            }
             cbutton2.setBackgroundResource(R.drawable.button_border_2_t)
             //(background0 as GradientDrawable).setStroke(dpToPx(3),0xFFFFFF)
             background_ = cbutton2.getBackground()
-            if (buttonpressed!=2u) {
-                (background_ as GradientDrawable).setColor(colotoset)
-            }
+
+            (background_ as GradientDrawable).setColor(colotoset)
+
 
         }
-        else
+
+        if (buttonstatus ==4u)
         {
-            cbutton2.setBackgroundResource(R.drawable.button_border_2)
-        }
 
-
-
-        if ((buttonstatus and 0x08u)>0u)
-        {
-            cbutton3.setBackgroundResource(R.drawable.button_border_3)
-            background_ = cbutton3.getBackground()
-
-            if (buttonpressed!=3u) {
-                (background_ as GradientDrawable).setColor(colotoset)
-            }
             cbutton3.setBackgroundResource(R.drawable.button_border_3_t)
             //(background0 as GradientDrawable).setStroke(dpToPx(3),0xFFFFFF)
             background_ = cbutton3.getBackground()
-            if (buttonpressed!=3u) {
-                (background_ as GradientDrawable).setColor(colotoset)
-            }
+
+            (background_ as GradientDrawable).setColor(colotoset)
+
 
         }
-        else
-        {
+
+    }
+
+    public fun setupbutton_disable() {
+        var background_: Drawable
+            var colortodraw  =(activity as MainActivity).light_characteristicsglobal.get((activity as MainActivity).nn.n).memorycolor.modifiedcolors[3]
             cbutton3.setBackgroundResource(R.drawable.button_border_3)
-        }
+            background_ = cbutton3.getBackground()
+            (background_ as GradientDrawable).setColor(colortodraw)
+
+            colortodraw  =(activity as MainActivity).light_characteristicsglobal.get((activity as MainActivity).nn.n).memorycolor.modifiedcolors[2]
+            cbutton2.setBackgroundResource(R.drawable.button_border_2)
+            background_ = cbutton2.getBackground()
+            (background_ as GradientDrawable).setColor(colortodraw)
+
+            colortodraw  =(activity as MainActivity).light_characteristicsglobal.get((activity as MainActivity).nn.n).memorycolor.modifiedcolors[1]
+            cbutton1.setBackgroundResource(R.drawable.button_border_1)
+            background_ = cbutton1.getBackground()
+            (background_ as GradientDrawable).setColor(colortodraw)
+
+            colortodraw  =(activity as MainActivity).light_characteristicsglobal.get((activity as MainActivity).nn.n).memorycolor.modifiedcolors[0]
+            cbutton0.setBackgroundResource(R.drawable.button_border_0)
+            background_ = cbutton0.getBackground()
+            (background_ as GradientDrawable).setColor(colortodraw)
+
+    }
+    public fun setupbutton_enable() {
+
+        var background_: Drawable
+
+        var n=(activity as MainActivity).nn.n
+        var nx = buttonstatus.toInt()-1
+        var colortodraw =(activity as MainActivity).light_characteristicsglobal.get(n).memorycolor.modifiedcolors[nx]
+        var redValue_m = (activity as MainActivity).light_characteristicsglobal.get(n).memorycolor.reds[nx]
+        var greenValue_m = (activity as MainActivity).light_characteristicsglobal.get(n).memorycolor.greens[nx]
+        var blueValue_m= (activity as MainActivity).light_characteristicsglobal.get(n).memorycolor.blues[nx]
+        var white_m= (activity as MainActivity).light_characteristicsglobal.get(n).memorycolor.whites[nx]
+        var Sint= (activity as MainActivity).light_characteristicsglobal.get(n).memorycolor.Sints[nx]
+        var Vint= (activity as MainActivity).light_characteristicsglobal.get(n).memorycolor.Vints[nx]
+
+        setupbutton_disable()
+    if (colortodraw!=0) {
+
+        (activity as MainActivity).setdata(
+                -1,
+            nx,
+            redValue_m,
+            greenValue_m,
+            blueValue_m,
+            white_m,
+            Sint,
+            Vint,
+            colortodraw,
+                -1
+        )
+
+
+        deactivatedraw = 1
+        changeseekbarwhite(kotlin.math.round((white_m.toFloat() / 255f * 100f).toFloat()).toInt())
+        changeseekbarbrigthness(Vint)
+
+
+        var redValue = Color.red(colortodraw);
+        var blueValue = Color.blue(colortodraw);
+        var greenValue = Color.green(colortodraw);
+        var hsv = FloatArray(3)
+        val RDBW = Color.RGBToHSV(redValue, greenValue, blueValue, hsv);
+        var Hvalue = (kotlin.math.round((hsv[0] / 360f * 100))).toInt()
+        changeseekbarH(Hvalue)
+
+        myCanvasView.drawstuff(colortodraw)
+        deactivatedraw = 0
+    }
+
+            if (buttonstatus ==4u) {
+
+                  cbutton3.setBackgroundResource(R.drawable.button_border_3_t)
+                  background_ = cbutton3.getBackground()
+                  (background_ as GradientDrawable).setColor(colortodraw)
+              }
+              if (buttonstatus ==3u) {
+               cbutton2.setBackgroundResource(R.drawable.button_border_2_t)
+              background_ = cbutton2.getBackground()
+              (background_ as GradientDrawable).setColor(colortodraw)
+              }
+              if (buttonstatus ==2u) {
+               cbutton1.setBackgroundResource(R.drawable.button_border_1_t)
+              background_ = cbutton1.getBackground()
+              (background_ as GradientDrawable).setColor(colortodraw)
+              }
+              if (buttonstatus ==1u) {
+                   cbutton0.setBackgroundResource(R.drawable.button_border_0_t)
+                  background_ = cbutton0.getBackground()
+                  (background_ as GradientDrawable).setColor(colortodraw)
+              }
 
     }
 
